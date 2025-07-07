@@ -211,54 +211,125 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
 
-                // --- Confetti Burst on Click ---
-                // Get the button's position and dimensions
+                // --- Confetti Burst on Click (from button) ---
                 const buttonRect = musicToggle.getBoundingClientRect();
-                // Calculate the center of the button relative to the viewport
                 const startX = buttonRect.left + buttonRect.width / 2;
                 const startY = buttonRect.top + buttonRect.height / 2;
 
-                const dotCount = gsap.utils.random(15, 30, 1);
-                const colors = [primaryColor, secondaryColor, '#ff7597', primaryVariantColor, '#018786'];
+                const burstDotCount = gsap.utils.random(20, 40, 1); // More dots for burst
+                const burstColors = [primaryColor, secondaryColor, '#ff7597', primaryVariantColor, '#018786']; // Reuse colors
 
-                for (let i = 0; i < dotCount; i++) {
+                for (let i = 0; i < burstDotCount; i++) {
                     const dot = document.createElement("div");
-                    dot.classList.add("dot");
-                    // Append to confetti-container for better organization
-                    document.querySelector('.confetti-container').appendChild(dot); 
+                    dot.classList.add("dot", "button-burst-confetti"); // Add specific class
+                    document.querySelector('.confetti-container').appendChild(dot);
 
                     gsap.set(dot, {
-                        backgroundColor: gsap.utils.random(colors),
-                        // Position relative to the confetti-container (which is fixed)
-                        top: startY, 
-                        left: startX, 
+                        backgroundColor: gsap.utils.random(burstColors),
+                        width: '1.5vw', // Larger size for burst
+                        height: '1.5vw', // Larger size for burst
+                        borderRadius: '50%', // Always circular for burst
+                        x: startX,
+                        y: startY,
                         scale: 0
                     });
 
                     gsap.timeline({ onComplete: () => dot.remove() })
                         .to(dot, {
-                            scale: gsap.utils.random(0.3, 1),
-                            duration: 0.3,
+                            scale: gsap.utils.random(0.5, 1.5), // Larger initial scale for burst
+                            duration: 0.2,
                             ease: "power3.out"
                         })
                         .to(dot, {
-                            duration: 2,
+                            duration: gsap.utils.random(0.8, 1.5), // Shorter duration for faster fall
                             physics2D: {
-                                velocity: gsap.utils.random(200, 400), 
+                                velocity: gsap.utils.random(300, 600), // Higher velocity for a "burst"
                                 angle: gsap.utils.random(0, 360),
-                                gravity: 800 
+                                gravity: gsap.utils.random(800, 1200) // Higher gravity for faster fall
                             },
+                            rotation: gsap.utils.random(0, 720), // Add rotation
                             autoAlpha: 0,
-                            ease: "none"
+                            ease: "power1.out" // Stronger ease out for burst fade
                         }, "<");
                 }
-                // --- End Confetti Burst ---
+                // --- End Confetti Burst (from button) ---
             });
         }
     }
 
+    // --- Function for Continuous Falling Confetti with Party Popper Effect (Increased Quantity & Full Width) ---
+    function startContinuousConfettiPoppers() {
+        const confettiContainer = document.querySelector('.confetti-container');
+        const continuousColors = [primaryColor, secondaryColor, '#ff7597', primaryVariantColor, '#018786'];
+
+        function createConfettiParticle() {
+            const dot = document.createElement("div");
+            dot.classList.add("dot", "continuous-popper-confetti"); // Add specific class
+            confettiContainer.appendChild(dot);
+
+            // Source point for the "popper" effect (full width, slightly above the top edge)
+            const popperStartX = gsap.utils.random(0, window.innerWidth);
+            const popperStartY = -20; // Start slightly above the top edge
+
+            // Wavy Confetti Dimensions
+            const width = gsap.utils.random(0.6, 1.2, 0.1) + 'vw'; // Slightly larger width range
+            const height = gsap.utils.random(0.3, 0.8, 0.1) + 'vw'; // Shorter height for wavy effect
+            // Randomize a few border-radius patterns for waviness
+            const wavyBorderRadius = gsap.utils.random([
+                '50% 10% 50% 10% / 10% 50% 10% 50%', // More abstract wavy
+                '60% 40% 60% 40% / 30% 70% 30% 70%', // Gentler wave
+                '70% 30% 70% 30% / 50% 50% 50% 50%', // More blob-like
+                '80% 20% 80% 20% / 20% 80% 20% 80%', // Elongated
+                '75% 25%', // Simple pill shape
+                '50% 0% 50% 0%', // Half-circle on one side
+                '0% 50% 0% 50%' // Half-circle on other side
+            ]);
+
+
+            const initialVelocity = gsap.utils.random(150, 250);
+            const initialAngle = gsap.utils.random(225, 315);
+            const particleGravity = gsap.utils.random(400, 600);
+            const fadeDuration = gsap.utils.random(0.5, 1.5);
+
+            gsap.set(dot, {
+                backgroundColor: gsap.utils.random(continuousColors),
+                width: width,
+                height: height,
+                borderRadius: wavyBorderRadius, // Apply the wavy border-radius
+                x: popperStartX,
+                y: popperStartY,
+                rotation: gsap.utils.random(0, 360), // Initial random rotation
+                opacity: 1
+            });
+
+            gsap.timeline({
+                onComplete: () => dot.remove()
+            })
+            .to(dot, {
+                duration: gsap.utils.random(2, 4),
+                physics2D: {
+                    velocity: initialVelocity,
+                    angle: initialAngle,
+                    gravity: particleGravity
+                },
+                rotation: "+=" + gsap.utils.random(720, 1440),
+                ease: "power1.out"
+            })
+            .to(dot, {
+                opacity: 0,
+                duration: fadeDuration,
+                ease: "power1.out"
+            }, "-=" + fadeDuration * 0.5);
+        }
+
+        setInterval(createConfettiParticle, 25);
+    }
+    // --- End Function for Continuous Falling Confetti with Party Popper Effect ---
+
+
     setupAudioInteraction();
     initSlideshow();
+    startContinuousConfettiPoppers();
 });
 
 // Slideshow Initialization Function (Unchanged from previous versions)
@@ -314,7 +385,7 @@ function initSlideshow() {
         if (sections[index] && images[currentIndex]) {
             gsap.set([sections[index], images[currentIndex]], { zIndex: 2, autoAlpha: 1 });
         }
-        
+
 
         tl
             .to(count, {
@@ -335,7 +406,7 @@ function initSlideshow() {
                 { xPercent: 0 },
                 0
             );
-            
+
         if (heading) { // Only animate if heading exists
             tl.to(
                 heading,
@@ -343,7 +414,7 @@ function initSlideshow() {
                 0
             );
         }
-        
+
         if (nextHeading) { // Only animate if nextHeading exists
             tl.fromTo(
                 nextHeading,
