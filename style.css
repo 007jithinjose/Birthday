@@ -35,9 +35,6 @@ html,
 body {
     margin: 0;
     padding: 0;
-    /* Removed fixed heights from html, body to allow scrolling */
-    /* height: 100vh; */
-    /* height: -webkit-fill-available; */
     overflow-x: hidden; /* Prevent horizontal scroll */
     min-height: 100vh; /* Ensure body takes at least full viewport height */
 }
@@ -51,27 +48,25 @@ body {
 
 /* Main Container for all content on the page */
 .main-container {
-    position: relative; /* All children (including interactive-section-wrapper) will be positioned relative to this */
+    position: relative;
     width: 100%;
-    /* No min-height here; let content define its height */
-    /* min-height: 100vh; */
-    background: var(--dark-bg); /* Body background can be inherited or set here */
-    display: flex; /* Use flexbox to center/arrange inner containers */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center; /* Center horizontally */
-    padding-top: 20px; /* Add some padding at the top of the main container */
-    padding-bottom: 50px; /* Add some padding at the bottom */
+    background: var(--dark-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 50px;
 }
 
 /* New Wrapper for the Interactive Section (Slides, Overlay, Confetti) */
 .interactive-section-wrapper {
-    position: relative; /* Crucial: All children (slides, overlay) are absolute to this */
-    width: 90%; /* Start with 90% width */
-    max-width: 1200px; /* Cap its maximum width for very large screens */
-    min-height: 400px; /* Minimum height to prevent content crunching on small screens */
-    height: clamp(500px, 80vh, 900px); /* Use clamp for flexible height: min 500px, ideal 80vh, max 900px */
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    min-height: 400px;
+    height: clamp(500px, 80vh, 900px);
     margin-bottom: 50px;
-    overflow: hidden; /* KEEP this for slides and overlay to be contained */
+    overflow: hidden;
     background: var(--darker-bg);
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -91,7 +86,7 @@ body {
     width: 100%;
     top: 0;
     left: 0;
-    position: absolute; /* Relative to .interactive-section-wrapper */
+    position: absolute;
     visibility: hidden;
 }
 
@@ -182,7 +177,7 @@ body {
 
 /* Overlay Section Styling (Replicating Sample Layout) */
 .overlay {
-    position: absolute; /* Relative to .interactive-section-wrapper */
+    position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
@@ -233,14 +228,14 @@ body {
 
 /* Confetti - Moved to be relative to main-container for full page fall */
 .confetti-container {
-    position: fixed; /* Changed from absolute to fixed */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
     z-index: 998;
-    overflow: hidden; /* Ensure confetti doesn't cause page scrollbars */
+    overflow: hidden;
 }
 
 .confetti {
@@ -295,6 +290,17 @@ body {
     max-width: 600px;
 }
 
+/* Highlight colors */
+.highlight-primary {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.highlight-secondary {
+    color: var(--secondary);
+    font-weight: 700;
+}
+
 .message-text-box h2 {
     color: var(--primary);
     margin-bottom: 1rem;
@@ -332,7 +338,7 @@ body {
 
 .music-toggle:hover {
     transform: scale(1.1);
-    background-color: var(--secondary) !important;
+    background-color: var(--primary-variant) !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
@@ -383,6 +389,7 @@ body {
         flex-grow: 1;
     }
 }
+
 
 /* Medium devices (tablets, 768px and up) */
 @media (max-width: 991.98px) {
