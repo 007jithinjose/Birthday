@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Farsana!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Observer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <section class="slide">
+        <div class="slide__outer">
+            <div class="slide__inner">
+                <div class="slide__content">
+                    <div class="slide__container container">
+                        <h2 class="slide__heading">HAPPY</h2>
+                        <figure class="slide__img-cont">
+                            <img class="slide__img img-cover" src="images/slide1.jpg" alt="Birthday celebration">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide__outer">
+            <div class="slide__inner">
+                <div class="slide__content">
+                    <div class="slide__container container">
+                        <h2 class="slide__heading">BIRTHDAY</h2>
+                        <figure class="slide__img-cont">
+                            <img class="slide__img img-cover" src="images/slide2.jpg" alt="Birthday cake">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide__outer">
+            <div class="slide__inner">
+                <div class="slide__content">
+                    <div class="slide__container container">
+                        <h2 class="slide__heading">FARSANA</h2>
+                        <figure class="slide__img-cont">
+                            <img class="slide__img img-cover" src="images/slide3.jpg" alt="Celebration">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="overlay">
+        <div class="overlay__content container">
+            <p class="overlay__count">0<span class="count">1</span></p>
+            <figure class="overlay__img-cont">
+                <img class="image img-cover" src="images/collage1.jpg" alt="Memory 1">
+                <img class="image img-cover" src="images/collage2.jpg" alt="Memory 2">
+                <img class="image img-cover" src="images/collage3.jpg" alt="Memory 3">
+                <img class="image img-cover" src="images/collage4.gif" alt="Memory 4">
+            </figure>
+        </div>
+    </section>
+
+    <div class="confetti-container position-fixed top-0 start-0 w-100 h-100"></div>
+    
+    <audio id="birthdayAudio" loop>
+        <source src="audio/happy-birthday.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <button class="music-toggle btn btn-primary rounded-circle position-fixed" style="width: 60px; height: 60px; bottom: 20px; right: 20px;">
+        <span class="fs-5">🔊</span>
+    </button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
