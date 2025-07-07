@@ -35,41 +35,46 @@ html,
 body {
     margin: 0;
     padding: 0;
-    height: 100vh; /* Full viewport height */
-    height: -webkit-fill-available; /* For mobile browser address bar quirks */
+    /* Removed fixed heights from html, body to allow scrolling */
+    /* height: 100vh; */
+    /* height: -webkit-fill-available; */
     overflow-x: hidden; /* Prevent horizontal scroll */
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
 }
 
 body {
     font-family: "Sora", sans-serif;
     color: var(--text);
     background: var(--dark-bg);
+    overflow-y: auto; /* Allow vertical scrolling on the body */
 }
 
 /* Main Container for all content on the page */
 .main-container {
     position: relative; /* All children (including interactive-section-wrapper) will be positioned relative to this */
     width: 100%;
-    /* No fixed height here, let content dictate height for the main page flow */
-    min-height: 100vh; /* Ensure it takes at least full viewport height */
+    /* No min-height here; let content define its height */
+    /* min-height: 100vh; */
     background: var(--dark-bg); /* Body background can be inherited or set here */
     display: flex; /* Use flexbox to center/arrange inner containers */
     flex-direction: column; /* Stack children vertically */
     align-items: center; /* Center horizontally */
-    justify-content: center; /* Center vertically if space allows */
+    padding-top: 20px; /* Add some padding at the top of the main container */
+    padding-bottom: 50px; /* Add some padding at the bottom */
 }
 
 /* New Wrapper for the Interactive Section (Slides, Overlay, Confetti) */
 .interactive-section-wrapper {
-    position: relative; /* Crucial: All children (slides, overlay, confetti) are absolute to this */
-    width: 90%; /* Example: Take 90% of main-container's width */
-    max-width: 1200px; /* Max width for larger screens */
-    height: 80vh; /* Define the height of your interactive section */
-    margin: 10px auto; /* Add some margin around it */
-    overflow: hidden; /* Crucial to contain absolute positioned children */
-    background: var(--darker-bg); /* Background for this specific section */
-    border-radius: 15px; /* Optional: Rounded corners for the container */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Optional: Shadow for depth */
+    position: relative; /* Crucial: All children (slides, overlay) are absolute to this */
+    width: 90%; /* Start with 90% width */
+    max-width: 1200px; /* Cap its maximum width for very large screens */
+    min-height: 400px; /* Minimum height to prevent content crunching on small screens */
+    height: clamp(500px, 80vh, 900px); /* Use clamp for flexible height: min 500px, ideal 80vh, max 900px */
+    margin-bottom: 50px;
+    overflow: hidden; /* KEEP this for slides and overlay to be contained */
+    background: var(--darker-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Image Styles for object-fit: cover */
@@ -85,9 +90,9 @@ body {
     height: 100%;
     width: 100%;
     top: 0;
-    left: 0; /* Ensures it covers the entire parent wrapper */
+    left: 0;
     position: absolute; /* Relative to .interactive-section-wrapper */
-    visibility: hidden; /* Hidden by default, JavaScript controls visibility */
+    visibility: hidden;
 }
 
 /* First slide visible by default for initial load */
@@ -97,14 +102,14 @@ body {
 
 /* Ensure first slide's wrappers are correctly positioned immediately */
 .slide:nth-of-type(1) .slide__outer {
-    transform: translateX(0%); /* Ensures it starts in place */
+    transform: translateX(0%);
 }
 .slide:nth-of-type(1) .slide__inner {
-    transform: translateX(0%); /* Ensures it starts in place */
+    transform: translateX(0%);
 }
 .slide:nth-of-type(1) .slide__heading {
-    --width: 200; /* Ensure initial font width is correct */
-    transform: translateX(0%); /* Ensure heading starts in place */
+    --width: 200;
+    transform: translateX(0%);
 }
 
 
@@ -112,7 +117,7 @@ body {
 .slide__inner {
     width: 100%;
     height: 100%;
-    overflow-y: hidden; /* Prevents internal scrolling of slide content */
+    overflow-y: hidden;
 }
 
 .slide__content {
@@ -127,10 +132,10 @@ body {
 
 .slide__container {
     position: relative;
-    max-width: 1400px; /* This max-width will now apply within the interactive-section-wrapper */
-    width: 100%; /* Changed from 100vw to 100% to fill parent */
+    max-width: 1400px;
+    width: 100%;
     margin: 0 auto;
-    height: 100%; /* Fill the height of slide__content */
+    height: 100%;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
@@ -140,25 +145,25 @@ body {
 }
 
 .slide__heading {
-    --width: 200; /* GSAP animates this custom property */
+    --width: 200;
     display: block;
     text-align: left;
     font-family: "Bandeins Sans & Strange Variable";
-    font-size: clamp(3rem, 10vw, 10rem); /* Responsive font size */
+    font-size: clamp(3rem, 10vw, 10rem);
     font-weight: 900;
     font-variation-settings: "wdth" var(--width);
     margin: 0;
     padding: 0;
-    color: var(--primary); /* Uses your primary color */
-    z-index: 999; /* Ensure it's above other elements */
-    grid-area: 2 / 2 / 3 / 10; /* Grid placement as per sample */
+    color: var(--primary);
+    z-index: 999;
+    grid-area: 2 / 2 / 3 / 10;
     align-self: end;
 }
 
 .slide__img-cont {
-    margin-top: 4rem; /* Initial margin for small screens */
-    grid-area: 2 / 1 / 7 / 8; /* Grid placement as per sample */
-    position: relative; /* Needed for img-cover ratio */
+    margin-top: 4rem;
+    grid-area: 2 / 1 / 7 / 8;
+    position: relative;
 }
 
 /* Slide background colors based on your theme */
@@ -167,11 +172,11 @@ body {
 }
 
 .slide:nth-of-type(2) .slide__content {
-    background: linear-gradient(135deg, var(--darker-bg) 0%, #6f2db7 100%); /* A darker purple gradient */
+    background: linear-gradient(135deg, var(--darker-bg) 0%, #6f2db7 100%);
 }
 
 .slide:nth-of-type(3) .slide__content {
-    background: linear-gradient(135deg, var(--darker-bg) 0%, #17b978 100%); /* A green-teal gradient */
+    background: linear-gradient(135deg, var(--darker-bg) 0%, #17b978 100%);
 }
 
 
@@ -182,15 +187,15 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 2; /* Sits above standard content, below active slides */
-    pointer-events: none; /* Allows clicks/interactions to pass through to underlying elements unless specifically targeted */
+    z-index: 2;
+    pointer-events: none;
 }
 
 .overlay__content {
     max-width: 1400px;
-    width: 100%; /* Changed from 100vw to 100% to fill parent */
+    width: 100%;
     margin: 0 auto;
-    height: 100%; /* Fill the height of the overlay parent */
+    height: 100%;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
@@ -200,12 +205,12 @@ body {
 }
 
 .overlay__img-cont {
-    position: relative; /* For absolute positioning of inner images */
+    position: relative;
     overflow: hidden;
     margin: 0;
-    grid-area: 4 / 3 / 9 / 11; /* Grid placement as per sample */
-    height: 110%; /* Adjusted from 60% for bigger height */
-    align-self: center; /* Center vertically within its grid area */
+    grid-area: 4 / 3 / 9 / 11;
+    height: 110%;
+    align-self: center;
 }
 
 .overlay__img-cont img {
@@ -217,25 +222,25 @@ body {
 }
 
 .overlay__count {
-    grid-area: 3 / 10 / 4 / 10; /* Grid placement as per sample */
+    grid-area: 3 / 10 / 4 / 10;
     font-size: clamp(3rem, 4vw, 15rem);
     margin: 0;
     padding: 0;
     text-align: right;
-    border-bottom: 7px var(--primary) solid; /* Uses your primary color */
-    color: var(--primary); /* Uses your primary color */
+    border-bottom: 7px var(--primary) solid;
+    color: var(--primary);
 }
 
-/* Confetti */
+/* Confetti - Moved to be relative to main-container for full page fall */
 .confetti-container {
-    position: absolute; /* Relative to .interactive-section-wrapper */
+    position: fixed; /* Changed from absolute to fixed */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
     z-index: 998;
-    /* overflow: hidden; */ /* Keep this commented if you want confetti to fall outside the wrapper */
+    overflow: hidden; /* Ensure confetti doesn't cause page scrollbars */
 }
 
 .confetti {
@@ -247,6 +252,71 @@ body {
     pointer-events: none;
     will-change: transform, opacity;
 }
+
+/* Message Section Styling */
+.message-section {
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 50px;
+    padding: 40px;
+    background: var(--message-bg);
+    border-radius: 15px;
+    border: 1px solid var(--primary);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.message__img-cont {
+    width: 100%;
+    max-width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 30px;
+    border: 5px solid var(--secondary);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.message-text-box {
+    text-align: left;
+    width: 100%;
+    max-width: 600px;
+}
+
+.message-text-box h2 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.message-text-box p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+
+.signature {
+    font-style: italic;
+    margin-top: 2rem;
+    color: var(--secondary);
+    text-align: right;
+    font-weight: 700;
+}
+
 
 /* Music Toggle Button */
 .music-toggle {
@@ -266,14 +336,14 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Responsive Adjustments (Bootstrap breakpoints where applicable, or custom) */
+/* Responsive Adjustments */
+
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
     .overlay__content,
     .slide__container {
         padding: 0 3rem;
-        /* margin-top: 10vh; */ /* Removed/adjusted as height is now relative to wrapper */
-        height: 100%; /* Fill the height of their direct parent */
+        height: 100%;
     }
 
     .overlay__img-cont {
@@ -292,10 +362,35 @@ body {
     .slide__heading {
         grid-area: 1 / 1 / 4 / 10;
     }
+
+    /* Message Section specific adjustments for larger screens */
+    .message-section {
+        padding: 50px;
+    }
+
+    .message-content {
+        flex-direction: row;
+        text-align: left;
+        gap: 40px;
+    }
+
+    .message__img-cont {
+        flex-shrink: 0;
+        margin-bottom: 0;
+    }
+
+    .message-text-box {
+        flex-grow: 1;
+    }
 }
 
 /* Medium devices (tablets, 768px and up) */
 @media (max-width: 991.98px) {
+    /* Interactive section adjustments */
+    .interactive-section-wrapper {
+        height: clamp(450px, 70vh, 700px);
+    }
+
     .slide__heading {
         font-size: clamp(2.5rem, 12vw, 8rem);
         margin-top: 3vh;
@@ -316,11 +411,34 @@ body {
         width: 70%;
         height: 65%;
     }
+
+    /* Message Section specific adjustments */
+    .message-section {
+        padding: 30px;
+    }
+    .message__img-cont {
+        width: 250px;
+        height: 250px;
+    }
+    .message-text-box h2 {
+        font-size: 2rem;
+    }
+    .message-text-box p {
+        font-size: 1rem;
+    }
 }
 
 
 /* Small devices (phones, 576px and up) */
 @media (max-width: 767.98px) {
+    /* Interactive section adjustments */
+    .interactive-section-wrapper {
+        width: 95%;
+        height: clamp(350px, 75vh, 600px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .slide__heading {
         grid-area: 1 / 1 / 3 / 11;
         text-align: center;
@@ -335,10 +453,34 @@ body {
         width: 85%;
         height: 60%;
     }
+
+    /* Message Section specific adjustments */
+    .message-section {
+        padding: 20px;
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .message__img-cont {
+        width: 200px;
+        height: 200px;
+        margin-bottom: 20px;
+    }
+    .message-text-box h2 {
+        font-size: 1.8rem;
+    }
+    .message-text-box p {
+        font-size: 0.95rem;
+    }
 }
 
 /* Extra small devices (phones, less than 576px) */
 @media (max-width: 575.98px) {
+    /* Interactive section adjustments */
+    .interactive-section-wrapper {
+        height: clamp(300px, 80vh, 500px);
+    }
+
     .slide__heading {
         font-size: clamp(1.8rem, 9vw, 5rem);
     }
@@ -346,5 +488,22 @@ body {
     .overlay__img-cont {
         width: 95%;
         height: 50%;
+    }
+
+    .message-section {
+        padding: 15px;
+    }
+    .message__img-cont {
+        width: 150px;
+        height: 150px;
+    }
+    .message-text-box h2 {
+        font-size: 1.5rem;
+    }
+    .message-text-box p {
+        font-size: 0.9rem;
+    }
+    .signature {
+        font-size: 0.9rem;
     }
 }

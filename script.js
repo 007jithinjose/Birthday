@@ -167,6 +167,7 @@ function initSlideshow() {
     const outerWrappers = gsap.utils.toArray(".slide__outer");
     const innerWrappers = gsap.utils.toArray(".slide__inner");
     const count = document.querySelector(".count");
+    const interactiveSection = document.querySelector(".interactive-section-wrapper"); // Get the interactive section wrapper
     // Removed the "JITHIN" slide, so total sections are 3 instead of 4
     const wrap = gsap.utils.wrap(0, sections.length);
     let currentIndex = 0;
@@ -174,13 +175,9 @@ function initSlideshow() {
     let animating = false; // Flag to prevent rapid navigation
 
     // Set initial states for all slides
-    // These specific sets are now redundant for the first slide due to CSS pre-setting,
-    // but useful for ensuring other slides start correctly for the animation cycle.
     gsap.set(outerWrappers, { xPercent: 100 });
     gsap.set(innerWrappers, { xPercent: -100 });
 
-    // The first slide's outer/inner/heading are pre-set in CSS, so this isn't strictly necessary for initial load,
-    // but doesn't hurt and helps maintain consistency with other slide sets.
     gsap.set(".slide:nth-of-type(1) .slide__outer", { xPercent: 0 });
     gsap.set(".slide:nth-of-type(1) .slide__inner", { xPercent: 0 });
     gsap.set(".slide:nth-of-type(1) .slide__heading", { "--width": 200, xPercent: 0 });
@@ -276,10 +273,11 @@ function initSlideshow() {
     // Start the slideshow initially
     startSlideInterval();
 
-    // Observer for scroll/touch/pointer events
+    // Observer for scroll/touch/pointer events, targeting only the interactive section
     Observer.create({
+        target: interactiveSection, // THIS IS THE KEY CHANGE!
         type: "wheel,touch,pointer",
-        preventDefault: true, // Prevent default scroll behavior
+        preventDefault: true, // Prevent default scroll behavior *only within this target*
         wheelSpeed: -1, // Normalize wheel direction (adjust if it feels inverted)
         onUp: () => { // Scroll/swipe up -> go to next slide
             if (animating) return;
@@ -292,7 +290,7 @@ function initSlideshow() {
         tolerance: 10 // Sensitivity for swipe/scroll gestures
     });
 
-    // Keyboard navigation
+    // Keyboard navigation (still global, as desired)
     document.addEventListener("keydown", function(e) {
         if (animating) return; // Prevent new animation if one is already in progress
 
