@@ -4,7 +4,6 @@
     src: url("https://res.cloudinary.com/dldmpwpcp/raw/upload/v1566406079/BandeinsStrangeVariable_esetvq.ttf");
 }
 
-
 /* Color Theme - Based on your provided dark theme */
 :root {
     --dark-bg: #121212;
@@ -34,18 +33,43 @@ figure {
 
 html,
 body {
-   /* overflow: hidden;  Crucial for fixed slides and smooth transitions */
     margin: 0;
     padding: 0;
     height: 100vh; /* Full viewport height */
     height: -webkit-fill-available; /* For mobile browser address bar quirks */
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 body {
     font-family: "Sora", sans-serif;
     color: var(--text);
     background: var(--dark-bg);
-    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Main Container for all content on the page */
+.main-container {
+    position: relative; /* All children (including interactive-section-wrapper) will be positioned relative to this */
+    width: 100%;
+    /* No fixed height here, let content dictate height for the main page flow */
+    min-height: 100vh; /* Ensure it takes at least full viewport height */
+    background: var(--dark-bg); /* Body background can be inherited or set here */
+    display: flex; /* Use flexbox to center/arrange inner containers */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically if space allows */
+}
+
+/* New Wrapper for the Interactive Section (Slides, Overlay, Confetti) */
+.interactive-section-wrapper {
+    position: relative; /* Crucial: All children (slides, overlay, confetti) are absolute to this */
+    width: 90%; /* Example: Take 90% of main-container's width */
+    max-width: 1200px; /* Max width for larger screens */
+    height: 80vh; /* Define the height of your interactive section */
+    margin: 10px auto; /* Add some margin around it */
+    overflow: hidden; /* Crucial to contain absolute positioned children */
+    background: var(--darker-bg); /* Background for this specific section */
+    border-radius: 15px; /* Optional: Rounded corners for the container */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Optional: Shadow for depth */
 }
 
 /* Image Styles for object-fit: cover */
@@ -61,8 +85,8 @@ body {
     height: 100%;
     width: 100%;
     top: 0;
-    left: 0; /* Ensures it covers the entire viewport */
-    position: fixed; /* Essential for overlay and z-indexing */
+    left: 0; /* Ensures it covers the entire parent wrapper */
+    position: absolute; /* Relative to .interactive-section-wrapper */
     visibility: hidden; /* Hidden by default, JavaScript controls visibility */
 }
 
@@ -103,17 +127,16 @@ body {
 
 .slide__container {
     position: relative;
-    max-width: 1400px;
-    width: 100vw; /* Use vw for initial sizing, then Bootstrap container handles max-width */
+    max-width: 1400px; /* This max-width will now apply within the interactive-section-wrapper */
+    width: 100%; /* Changed from 100vw to 100% to fill parent */
     margin: 0 auto;
-    height: 90vh; /* Adjust height based on sample's grid areas */
-    margin-bottom: 10vh; /* Space below the grid */
+    height: 100%; /* Fill the height of slide__content */
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
-    padding: 0 1rem; /* Bootstrap container padding will be overridden by custom padding if needed */
+    padding: 0 1rem;
 }
 
 .slide__heading {
@@ -154,7 +177,7 @@ body {
 
 /* Overlay Section Styling (Replicating Sample Layout) */
 .overlay {
-    position: fixed;
+    position: absolute; /* Relative to .interactive-section-wrapper */
     top: 0;
     bottom: 0;
     left: 0;
@@ -165,16 +188,15 @@ body {
 
 .overlay__content {
     max-width: 1400px;
-    width: 100vw;
+    width: 100%; /* Changed from 100vw to 100% to fill parent */
     margin: 0 auto;
-    padding: 0 1rem;
-    height: 90vh;
-    margin-bottom: 10vh;
+    height: 100%; /* Fill the height of the overlay parent */
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
+    padding: 0 1rem;
 }
 
 .overlay__img-cont {
@@ -182,7 +204,6 @@ body {
     overflow: hidden;
     margin: 0;
     grid-area: 4 / 3 / 9 / 11; /* Grid placement as per sample */
-    /* Increased height for collage images */
     height: 110%; /* Adjusted from 60% for bigger height */
     align-self: center; /* Center vertically within its grid area */
 }
@@ -205,59 +226,16 @@ body {
     color: var(--primary); /* Uses your primary color */
 }
 
-/* Content Section (Below the full-screen interactive slides) - Removed relevant styles as section is gone */
-/* .content-container {
-    position: relative;
-    width: 100%;
-    min-height: 200vh;
-    background: var(--dark-bg);
-    z-index: 1;
-    padding-top: 100vh;
-}
-
-.message {
-    background: var(--message-bg);
-    padding: 3rem;
-    border-radius: 15px;
-    margin: 3rem auto;
-    max-width: 800px;
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--primary);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-.message h2 {
-    color: var(--primary);
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.message p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    color: var(--text);
-}
-
-.signature {
-    font-style: italic;
-    margin-top: 2rem;
-    color: var(--secondary);
-    text-align: right;
-    font-weight: 700;
-} */
-
 /* Confetti */
 .confetti-container {
-    position: fixed;
+    position: absolute; /* Relative to .interactive-section-wrapper */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
     z-index: 998;
-    /* overflow: hidden; */
+    /* overflow: hidden; */ /* Keep this commented if you want confetti to fall outside the wrapper */
 }
 
 .confetti {
@@ -294,8 +272,8 @@ body {
     .overlay__content,
     .slide__container {
         padding: 0 3rem;
-        margin-top: 10vh;
-        height: 80vh;
+        /* margin-top: 10vh; */ /* Removed/adjusted as height is now relative to wrapper */
+        height: 100%; /* Fill the height of their direct parent */
     }
 
     .overlay__img-cont {
@@ -316,7 +294,7 @@ body {
     }
 }
 
-/* Medium devices (tabl*ets, 768px and up) */
+/* Medium devices (tablets, 768px and up) */
 @media (max-width: 991.98px) {
     .slide__heading {
         font-size: clamp(2.5rem, 12vw, 8rem);
@@ -338,12 +316,6 @@ body {
         width: 70%;
         height: 65%;
     }
-    
-    /* Removed message box responsive styles */
-    /* .message {
-        padding: 2.5rem !important;
-        margin: 2.5rem auto !important;
-    } */
 }
 
 
@@ -363,12 +335,6 @@ body {
         width: 85%;
         height: 60%;
     }
-    
-    /* Removed message box responsive styles */
-    /* .message {
-        padding: 1.5rem !important;
-        margin: 1.5rem auto !important;
-    } */
 }
 
 /* Extra small devices (phones, less than 576px) */
