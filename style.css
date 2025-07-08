@@ -355,6 +355,48 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
+
+/* NEW DRAGGABLE CAKE CONTAINER STYLES */
+#draggable-cake-section {
+    position: relative; /* Important for positioning the cake inside */
+    width: 90%;
+    max-width: 1200px;
+    height: 300px; /* Adjust height as needed */
+    margin-top: 50px; /* Space it from messages section */
+    margin-bottom: 50px; /* Space it from content below if any */
+    overflow: hidden; /* Keep the draggable cake inside its bounds */
+    border-radius: 15px; /* Matches other sections */
+}
+
+.glossy-dark-background {
+    background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent */
+    backdrop-filter: blur(5px); /* Glossy blur effect */
+    -webkit-backdrop-filter: blur(5px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle white border */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); /* Soft shadow */
+}
+
+.cake-image {
+    width: 180px; /* Example size, adjust based on your image */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 80%; /* Ensure it's responsive */
+    position: absolute; /* Essential for Draggable to work */
+    cursor: grab; /* Indicates it's draggable */
+    will-change: transform;
+}
+
+/* NEW: Farsu Image Styles */
+.farsu-image {
+    width: 80px; /* Smaller than cake, adjust as needed */
+    height: auto; /* Maintain aspect ratio */
+    position: absolute; /* Essential for Draggable to work */
+    cursor: grab; /* Indicates it's draggable */
+    will-change: transform;
+    z-index: 10; /* Ensure it's above the cake slightly if they overlap */
+}
+/* END NEW DRAGGABLE CAKE CONTAINER STYLES */
+
+
 /* Responsive Adjustments */
 
 /* Large devices (desktops, 992px and up) */
@@ -401,6 +443,19 @@ body {
     .message-text-box {
         flex-grow: 1;
     }
+
+    #draggable-cake-section {
+        height: 350px;
+    }
+
+    .cake-image {
+        width: 220px;
+    }
+
+    /* NEW: Farsu Image Responsive Adjustments */
+    .farsu-image {
+        width: 100px;
+    }
 }
 
 
@@ -416,17 +471,17 @@ body {
         margin-top: 3vh;
         padding-top: 1.5rem;
     }
-    
+
     .slide__container {
         padding-top: 5vh;
         grid-template-rows: repeat(12, 1fr);
     }
-    
+
     .slide__img-cont {
         grid-area: 3 / 1 / 9 / 11;
         margin-top: 2rem;
     }
-    
+
     .overlay__img-cont {
         width: 70%;
         height: 65%;
@@ -446,6 +501,19 @@ body {
     .message-text-box p {
         font-size: 1rem;
     }
+
+    #draggable-cake-section {
+        height: 300px;
+    }
+
+    .cake-image {
+        width: 150px;
+    }
+
+    /* NEW: Farsu Image Responsive Adjustments */
+    .farsu-image {
+        width: 70px;
+    }
 }
 
 
@@ -464,11 +532,11 @@ body {
         text-align: center;
         font-size: clamp(2rem, 10vw, 6rem);
     }
-    
+
     .slide__img-cont {
         grid-area: 4 / 1 / 11 / 11;
     }
-    
+
     .overlay__img-cont {
         width: 85%;
         height: 60%;
@@ -492,6 +560,19 @@ body {
     .message-text-box p {
         font-size: 0.95rem;
     }
+
+    #draggable-cake-section {
+        height: 250px;
+    }
+
+    .cake-image {
+        width: 120px;
+    }
+
+    /* NEW: Farsu Image Responsive Adjustments */
+    .farsu-image {
+        width: 60px;
+    }
 }
 
 /* Extra small devices (phones, less than 576px) */
@@ -504,7 +585,7 @@ body {
     .slide__heading {
         font-size: clamp(1.8rem, 9vw, 5rem);
     }
-    
+
     .overlay__img-cont {
         width: 95%;
         height: 50%;
@@ -525,5 +606,18 @@ body {
     }
     .signature {
         font-size: 0.9rem;
+    }
+
+    #draggable-cake-section {
+        height: 200px;
+    }
+
+    .cake-image {
+        width: 100px;
+    }
+
+    /* NEW: Farsu Image Responsive Adjustments */
+    .farsu-image {
+        width: 50px;
     }
 }
