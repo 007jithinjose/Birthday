@@ -10,7 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Physics2DPlugin.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- All CSS is now linked from a single style.css file -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -85,7 +88,7 @@
                 <div class="message-text-box">
                     <h2>Dearest Farsana,</h2>
                     <p>On your <span class="highlight-primary">special day</span> 🎉, I wish you all the <span class="highlight-secondary">happiness</span>, <span class="highlight-primary">joy</span> ✨, and <span class="highlight-secondary">success</span> in the world.</p>
-                    <p>May your life be filled with <span class="highlight-primary">wonderful moments</span> 📸, <span class="highlight-secondary">incredible adventures</span> 🗺️, and <span class="highlight-primary">cherished memories</span> 💖. You bring so much <span class="highlight-secondary">light</span> 🌟 and <span class="highlight-primary">warmth</span> 🔥 into everyone's lives, and I am <span class="highlight-secondary">incredibly grateful</span> for you.</p>
+                    <p>May your life be filled with <span class="highlight-primary">wonderful moments</span> 📸, <span class="highlight-secondary">incredible adventures</span> 🗺️, and <span class="highlight-primary">cherished memories</span> 💖. You bring so much <span class="highlight-secondary">light</span> 🌟 and <span class="highlight-secondary">warmth</span> 🔥 into everyone's lives, and I am <span class="highlight-secondary">incredibly grateful</span> for you.</p>
                     <p>May this year be even more <span class="highlight-primary">amazing</span> 🚀 than the last, filled with new <span class="highlight-secondary">opportunities</span> 🌈 and <span class="highlight-primary">beautiful experiences</span> 🌸. Keep <span class="highlight-secondary">shining brightly</span>! ✨</p>
                     <p class="signature">With all my love,<br>Jithin</p>
                 </div>
@@ -96,6 +99,41 @@
             <img class="cake-image" src="images/birthday-cake.webp" alt="Birthday Cake" />
             <img class="farsu-image" src="images/farsu.webp" alt="Farsu Image" />
         </div>
+
+        <!-- NEW SECTION: Mouse Wave Gallery Effect with Birthday Content -->
+        <section class="mwg_effect000">
+            <div class="header">
+                <div>
+                    <p class="button button1">
+                        <!-- Using a placeholder for the icon, replace with a suitable SVG or image -->
+                        <img src="https://placehold.co/22x22/000000/FFFFFF?text=🎉" alt="Birthday Icon">
+                        <span>Memories</span>
+                    </p>
+                </div>
+                <div>Your special collection of moments</div>
+                <div>
+                    <p class="button button2">More Joy!</p>
+                </div>
+            </div>
+
+            <div class="medias">
+                <!-- Using placeholder images for demonstration -->
+                <div class="media"><img src="https://placehold.co/150x150/bb86fc/ffffff?text=Memory+1" alt="Memory 1"></div>
+                <div class="media"><img src="https://placehold.co/150x150/03dac6/ffffff?text=Memory+2" alt="Memory 2"></div>
+                <div class="media"><img src="https://placehold.co/150x150/bb86fc/ffffff?text=Memory+3" alt="Memory 3"></div>
+                <div class="media"><img src="https://placehold.co/150x150/03dac6/ffffff?text=Memory+4" alt="Memory 4"></div>
+                <div class="media"><img src="https://placehold.co/150x150/bb86fc/ffffff?text=Memory+5" alt="Memory 5"></div>
+                <div class="media"><img src="https://placehold.co/150x150/03dac6/ffffff?text=Memory+6" alt="Memory 6"></div>
+                <div class="media"><img src="https://placehold.co/150x150/bb86fc/ffffff?text=Memory+7" alt="Memory 7"></div>
+                <div class="media"><img src="https://placehold.co/150x150/03dac6/ffffff?text=Memory+8" alt="Memory 8"></div>
+                <div class="media"><img src="https://placehold.co/150x150/bb86fc/ffffff?text=Memory+9" alt="Memory 9"></div>
+                <div class="media"><img src="https://placehold.co/150x150/03dac6/ffffff?text=Memory+10" alt="Memory 10"></div>
+                <div class="media"><img src="https://placehold.co/150x150/bb86fc/ffffff?text=Memory+11" alt="Memory 11"></div>
+                <div class="media"><img src="https://placehold.co/150x150/03dac6/ffffff?text=Memory+12" alt="Memory 12"></div>
+            </div>
+        </section>
+        <!-- END NEW SECTION -->
+
     </div>
 
     <audio id="birthdayAudio" loop>
@@ -104,9 +142,10 @@
     </audio>
 
     <button class="music-toggle btn btn-primary rounded-circle position-fixed" style="width: 60px; height: 60px; bottom: 20px; right: 20px;">
-        </button>
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- All JavaScript is now linked from a single script.js file -->
     <script src="script.js"></script>
 </body>
 </html>

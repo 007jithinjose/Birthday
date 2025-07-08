@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const primaryVariantColor = rootStyles.getPropertyValue('--primary-variant').trim();
     const secondaryColor = rootStyles.getPropertyValue('--secondary').trim();
 
-    // Register GSAP plugins (Observer, MorphSVGPlugin, Physics2DPlugin, Draggable, InertiaPlugin are needed)
+    // Register ALL GSAP plugins needed for the entire page
+    // Ensure Observer, MorphSVGPlugin, Physics2DPlugin, Draggable, InertiaPlugin are included
     gsap.registerPlugin(Observer, MorphSVGPlugin, Physics2DPlugin, Draggable, InertiaPlugin);
 
     // Music toggle functionality
@@ -365,8 +366,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     gsap.to(this.target, { scale: 1.1, duration: 0.1, ease: "power2.out" });
                     // When cake is dragged, Farsu should follow instantly without its own random movement
                     gsap.to(farsuImage, {
-                        x: this.x + gsap.utils.random(-20, 20), // Offset slightly
-                        y: this.y + gsap.utils.random(-20, 20), // Offset slightly
+                        x: this.x + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
+                        y: this.y + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
                         duration: 0.1, // Instant follow
                         overwrite: true
                     });
@@ -374,8 +375,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 onDrag: function() {
                     // During drag, Farsu follows the cake
                     gsap.to(farsuImage, {
-                        x: this.x + gsap.utils.random(-20, 20), // Offset slightly
-                        y: this.y + gsap.utils.random(-20, 20), // Offset slightly
+                        x: this.x + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
+                        y: this.y + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
                         duration: 0.1, // Keep it snappy
                         overwrite: true
                     });
@@ -389,8 +390,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 onThrowUpdate: function() { // Keep Farsu following during cake's inertia
                     gsap.set(farsuImage, {
-                        x: this.x + gsap.utils.random(-20, 20),
-                        y: this.y + gsap.utils.random(-20, 20)
+                        x: this.x + gsap.utils.random(-10, 10), // Reduced shaking
+                        y: this.y + gsap.utils.random(-10, 10)  // Reduced shaking
                     });
                 }
             })[0];
@@ -498,277 +499,343 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Function for Farsu to follow the cake
-       function startFollowingCake(farsuTarget, farsuDraggable, cakeDraggable) {
-    if (farsuMovementTween) {
-        farsuMovementTween.kill(); // Kill any existing independent movement
-    }
-
-    // Instead of an Observer on the cake's target, which might only fire on interaction,
-    // let's create a continuous tween for Farsu that always aims for the cake's position.
-    // This makes Farsu 'chase' the cake.
-    farsuMovementTween = gsap.to(farsuTarget, {
-        duration: 0.8, // How quickly Farsu tries to catch up (adjust as needed)
-        ease: "power2.out", // Smooth easing for the chase
-        repeat: -1, // Keep repeating indefinitely
-        onUpdate: function() {
-            // Calculate a target position for Farsu relative to the cake
-            const cakeX = cakeDraggable.x;
-            const cakeY = cakeDraggable.y;
-
-            // Add some subtle random offset for a playful follow, reduced to lessen "shaking"
-            const offsetX = gsap.utils.random(-10, 10);
-            const offsetY = gsap.utils.random(-10, 10);
-
-            const farsuTargetX = cakeX + offsetX;
-            const farsuTargetY = cakeY + offsetY;
-
-            // Ensure Farsu stays within its own bounds
-            const constrainedX = gsap.utils.clamp(farsuDraggable.minX, farsuDraggable.maxX, farsuTargetX);
-            const constrainedY = gsap.utils.clamp(farsuDraggable.minY, farsuDraggable.maxY, farsuTargetY);
-
-            // Update Farsu's position directly or use a subtle physics tween for the next small step
-            // Using a small physics tween here can create the bouncy effect.
-            gsap.to(farsuTarget, {
-                x: constrainedX,
-                y: constrainedY,
-                duration: 0.3, // Short duration for a responsive follow
-                physics2D: {
-                    velocity: 100, // Small velocity
-                    angle: Math.atan2(constrainedY - farsuDraggable.y, constrainedX - farsuDraggable.x) * 180 / Math.PI,
-                    gravity: 0,
-                    friction: 0.1,
-                    bounce: farsuDraggable.vars.inertia.bounce * 0.5 // Less bounce for smoother follow
-                },
-                ease: "none", // Let physics handle the easing
-                overwrite: true // Important to avoid conflicts
-            });
-        },
-        overwrite: "auto" // This tween itself should be overwriteable
-    });
-
-    // Add a listener to the cake's Draggable instance to ensure Farsu's follow is active
-    // whenever the cake is dragged or thrown.
-    cakeDraggable.addEventListener("drag", () => {
-         // When cake is dragged, Farsu should follow instantly, cancelling its physics tween briefly
-        gsap.to(farsuTarget, {
-            x: cakeDraggable.x + gsap.utils.random(-10, 10),
-            y: cakeDraggable.y + gsap.utils.random(-10, 10),
-            duration: 0.1, // Instant follow during drag
-            overwrite: true
-        });
-        // Ensure the main following tween is active
-        if (farsuMovementTween && !farsuMovementTween.isActive()) {
-            farsuMovementTween.restart(true);
-        }
-    });
-
-    cakeDraggable.addEventListener("throwUpdate", () => {
-        // During throw (inertia), Farsu continues to follow
-        gsap.to(farsuTarget, {
-            x: cakeDraggable.x + gsap.utils.random(-10, 10),
-            y: cakeDraggable.y + gsap.utils.random(-10, 10),
-            duration: 0.1, // Keep it snappy
-            overwrite: true
-        });
-        // Ensure the main following tween is active
-        if (farsuMovementTween && !farsuMovementTween.isActive()) {
-            farsuMovementTween.restart(true);
-        }
-    });
-
-    // When cake stops moving (either by drag end or random tween completion),
-    // Farsu should check its state.
-    cakeDraggable.addEventListener("dragend", () => {
-        if (!cakeDraggable.isDragging) { // If cake is no longer being dragged
-            // Resume the continuous follow tween or restart its random movement if cake is truly idle
+        function startFollowingCake(farsuTarget, farsuDraggable, cakeDraggable) {
             if (farsuMovementTween) {
-                farsuMovementTween.restart(true); // Restart the chase
-            } else {
-                // Fallback in case tween was killed unexpectedly
-                startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
+                farsuMovementTween.kill(); // Kill any existing independent movement
+            }
+
+            // Instead of an Observer on the cake's target, which might only fire on interaction,
+            // let's create a continuous tween for Farsu that always aims for the cake's position.
+            // This makes Farsu 'chase' the cake.
+            farsuMovementTween = gsap.to(farsuTarget, {
+                duration: 0.8, // How quickly Farsu tries to catch up (adjust as needed)
+                ease: "power2.out", // Smooth easing for the chase
+                repeat: -1, // Keep repeating indefinitely
+                onUpdate: function() {
+                    // Calculate a target position for Farsu relative to the cake
+                    const cakeX = cakeDraggable.x;
+                    const cakeY = cakeDraggable.y;
+
+                    // Add some subtle random offset for a playful follow, reduced to lessen "shaking"
+                    const offsetX = gsap.utils.random(-10, 10);
+                    const offsetY = gsap.utils.random(-10, 10);
+
+                    const farsuTargetX = cakeX + offsetX;
+                    const farsuTargetY = cakeY + offsetY;
+
+                    // Ensure Farsu stays within its own bounds
+                    const constrainedX = gsap.utils.clamp(farsuDraggable.minX, farsuDraggable.maxX, farsuTargetX);
+                    const constrainedY = gsap.utils.clamp(farsuDraggable.minY, farsuDraggable.maxY, farsuTargetY);
+
+                    // Update Farsu's position directly or use a subtle physics tween for the next small step
+                    // Using a small physics tween here can create the bouncy effect.
+                    gsap.to(farsuTarget, {
+                        x: constrainedX,
+                        y: constrainedY,
+                        duration: 0.3, // Short duration for a responsive follow
+                        physics2D: {
+                            velocity: 100, // Small velocity
+                            angle: Math.atan2(constrainedY - farsuDraggable.y, constrainedX - farsuDraggable.x) * 180 / Math.PI,
+                            gravity: 0,
+                            friction: 0.1,
+                            bounce: farsuDraggable.vars.inertia.bounce * 0.5 // Less bounce for smoother follow
+                        },
+                        ease: "none", // Let physics handle the easing
+                        overwrite: true // Important to avoid conflicts
+                    });
+                },
+                overwrite: "auto" // This tween itself should be overwriteable
+            });
+
+            // Add a listener to the cake's Draggable instance to ensure Farsu's follow is active
+            // whenever the cake is dragged or thrown.
+            cakeDraggable.addEventListener("drag", () => {
+                // When cake is dragged, Farsu should follow instantly, cancelling its physics tween briefly
+                gsap.to(farsuTarget, {
+                    x: cakeDraggable.x + gsap.utils.random(-10, 10),
+                    y: cakeDraggable.y + gsap.utils.random(-10, 10),
+                    duration: 0.1, // Instant follow during drag
+                    overwrite: true
+                });
+                // Ensure the main following tween is active
+                if (farsuMovementTween && !farsuMovementTween.isActive()) {
+                    farsuMovementTween.restart(true);
+                }
+            });
+
+            cakeDraggable.addEventListener("throwUpdate", () => {
+                // During throw (inertia), Farsu continues to follow
+                gsap.to(farsuTarget, {
+                    x: cakeDraggable.x + gsap.utils.random(-10, 10),
+                    y: cakeDraggable.y + gsap.utils.random(-10, 10),
+                    duration: 0.1, // Keep it snappy
+                    overwrite: true
+                });
+                // Ensure the main following tween is active
+                if (farsuMovementTween && !farsuMovementTween.isActive()) {
+                    farsuMovementTween.restart(true);
+                }
+            });
+
+            // When cake stops moving (either by drag end or random tween completion),
+            // Farsu should check its state.
+            cakeDraggable.addEventListener("dragend", () => {
+                if (!cakeDraggable.isDragging) { // If cake is no longer being dragged
+                    // Resume the continuous follow tween or restart its random movement if cake is truly idle
+                    if (farsuMovementTween) {
+                        farsuMovementTween.restart(true); // Restart the chase
+                    } else {
+                        // Fallback in case tween was killed unexpectedly
+                        startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
+                    }
+                }
+            });
+
+            // Also add a listener for when the cake's *random movement* tween completes
+            // This is important because the cake's movement isn't only from user drag/throw.
+            // For simplicity, let's assume `cakeMovementTween` is accessible.
+            if (cakeMovementTween) {
+                cakeMovementTween.eventCallback("onComplete", () => {
+                    // When cake's random movement stops, and it's not being dragged,
+                    // Farsu should start its own random movement if not already following.
+                    if (!cakeDraggable.isDragging && !farsuDraggable.isDragging) {
+                        startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
+                    }
+                });
             }
         }
-    });
-
-    // Also add a listener for when the cake's *random movement* tween completes
-    // This is important because the cake's movement isn't only from user drag/throw.
-    // You'll need to pass the cakeMovementTween to this function or access it globally
-    // for this specific listener. For simplicity, let's assume `cakeMovementTween` is accessible.
-    if (cakeMovementTween) {
-        cakeMovementTween.eventCallback("onComplete", () => {
-            // When cake's random movement stops, and it's not being dragged,
-            // Farsu should start its own random movement if not already following.
-            if (!cakeDraggable.isDragging && !farsuDraggable.isDragging) {
-                startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
-            }
-        });
-    }
-}
 
         // Delay the setup slightly to ensure all CSS and layout are fully rendered.
         gsap.delayedCall(0.2, setupInteractions); // 200ms delay
     }
     // --- End Draggable Birthday Cake and Following Farsu Functionality ---
 
+    // Slideshow Initialization Function
+    function initSlideshow() {
+        const sections = gsap.utils.toArray(".slide");
+        const images = gsap.utils.toArray(".image").reverse();
+        const slideImages = gsap.utils.toArray(".slide__img");
+        const outerWrappers = gsap.utils.toArray(".slide__outer");
+        const innerWrappers = gsap.utils.toArray(".slide__inner");
+        const count = document.querySelector(".count");
+        const interactiveSection = document.querySelector(".interactive-section-wrapper");
+        const wrap = gsap.utils.wrap(0, sections.length);
+        let currentIndex = 0;
+        let slideInterval;
+        let animating = false;
+
+        // Check if elements exist before setting GSAP properties
+        if (outerWrappers.length) gsap.set(outerWrappers, { xPercent: 100 });
+        if (innerWrappers.length) gsap.set(innerWrappers, { xPercent: -100 });
+
+        const firstSlideOuter = document.querySelector(".slide:nth-of-type(1) .slide__outer");
+        const firstSlideInner = document.querySelector(".slide:nth-of-type(1) .slide__inner");
+        const firstSlideHeading = document.querySelector(".slide:nth-of-type(1) .slide__heading");
+
+        if (firstSlideOuter) gsap.set(firstSlideOuter, { xPercent: 0 });
+        if (firstSlideInner) gsap.set(firstSlideInner, { xPercent: 0 });
+        if (firstSlideHeading) gsap.set(firstSlideHeading, { "--width": 200, xPercent: 0 });
+
+
+        function gotoSection(index, direction) {
+            if (animating) return;
+            animating = true;
+
+            index = wrap(index);
+
+            let tl = gsap.timeline({
+                defaults: { duration: 0.8, ease: "expo.inOut" },
+                onComplete: () => {
+                    animating = false;
+                }
+            });
+
+            let currentSection = sections[currentIndex];
+            let heading = currentSection ? currentSection.querySelector(".slide__heading") : null;
+            let nextSection = sections[index];
+            let nextHeading = nextSection ? nextSection.querySelector(".slide__heading") : null;
+
+            gsap.set([sections, images], { zIndex: 0, autoAlpha: 0 });
+            // Ensure elements exist before setting
+            if (sections[currentIndex] && images[index]) {
+                gsap.set([sections[currentIndex], images[index]], { zIndex: 1, autoAlpha: 1 });
+            }
+            if (sections[index] && images[currentIndex]) {
+                gsap.set([sections[index], images[currentIndex]], { zIndex: 2, autoAlpha: 1 });
+            }
+
+
+            tl
+                .to(count, {
+                    innerText: index + 1,
+                    duration: 0.4,
+                    snap: { innerText: 1 },
+                    ease: "power2.out"
+                }, 0.25)
+                .fromTo(
+                    outerWrappers[index],
+                    { xPercent: 100 * direction },
+                    { xPercent: 0 },
+                    0
+                )
+                .fromTo(
+                    innerWrappers[index],
+                    { xPercent: -100 * direction },
+                    { xPercent: 0 },
+                    0
+                );
+
+            if (heading) { // Only animate if heading exists
+                tl.to(
+                    heading,
+                    { "--width": 800, xPercent: 30 * direction },
+                    0
+                );
+            }
+
+            if (nextHeading) { // Only animate if nextHeading exists
+                tl.fromTo(
+                    nextHeading,
+                    { "--width": 800, xPercent: -30 * direction },
+                    { "--width": 200, xPercent: 0 },
+                    0
+                );
+            }
+
+            tl
+                .fromTo(
+                    images[index],
+                    { xPercent: 125 * direction, scaleX: 1.5, scaleY: 1.3 },
+                    { xPercent: 0, scaleX: 1, scaleY: 1 },
+                    0
+                )
+                .fromTo(
+                    images[currentIndex],
+                    { xPercent: 0, scaleX: 1, scaleY: 1 },
+                    { xPercent: -125 * direction, scaleX: 1.5, scaleY: 1.3 },
+                    0
+                )
+                .fromTo(
+                    slideImages[index],
+                    { scale: 2 },
+                    { scale: 1 },
+                    0
+                );
+
+            currentIndex = index;
+            resetSlideInterval();
+        }
+
+        function startSlideInterval() {
+            slideInterval = setInterval(() => gotoSection(currentIndex + 1, +1), 3000);
+        }
+
+        function resetSlideInterval() {
+            clearInterval(slideInterval);
+            startSlideInterval();
+        }
+
+        startSlideInterval();
+
+        if (interactiveSection) { // Ensure interactiveSection exists before creating observer
+            Observer.create({
+                target: interactiveSection,
+                type: "wheel,touch,pointer",
+                preventDefault: true,
+                wheelSpeed: -1,
+                onUp: () => {
+                    if (animating) return;
+                    gotoSection(currentIndex + 1, +1);
+                },
+                onDown: () => {
+                    if (animating) return;
+                    gotoSection(currentIndex - 1, -1);
+                },
+                tolerance: 10
+            });
+        }
+
+        document.addEventListener("keydown", function(e) {
+            if (animating) return;
+
+            if ((e.code === "ArrowUp" || e.code === "ArrowLeft")) {
+                gotoSection(currentIndex - 1, -1);
+            }
+            if ((e.code === "ArrowDown" || e.code === "ArrowRight" || e.code === "Space" || e.code === "Enter")) {
+                gotoSection(currentIndex + 1, 1);
+            }
+        });
+    }
+
+    // --- Function to initialize the Mouse Wave Gallery effect ---
+    function initMouseWaveGallery() {
+        let oldX = 0,
+            oldY = 0,
+            deltaX = 0,
+            deltaY = 0
+
+        const root = document.querySelector('.mwg_effect000')
+
+        // Ensure root exists before adding event listener
+        if (root) {
+            root.addEventListener("mousemove", (e) => {
+                // Calculate horizontal movement since the last mouse position
+                deltaX = e.clientX - oldX;
+
+                // Calculate vertical movement since the last mouse position
+                deltaY = e.clientY - oldY;
+
+                // Update old coordinates with the current mouse position
+                oldX = e.clientX;
+                oldY = e.clientY;
+            })
+
+            root.querySelectorAll('.media').forEach(el => {
+                // Add an event listener for when the mouse enters each media
+                el.addEventListener('mouseenter', () => {
+                    const tl = gsap.timeline({
+                        onComplete: () => {
+                            tl.kill()
+                        }
+                    })
+                    tl.timeScale(1.2) // Animation will play 20% faster than normal
+
+                    const image = el.querySelector('img')
+                    if (image) { // Ensure image exists
+                        tl.to(image, {
+                            inertia: {
+                                x: {
+                                    velocity: deltaX * 30, // Higher number = movement amplified
+                                    end: 0 // Go back to the initial position
+                                },
+                                y: {
+                                    velocity: deltaY * 30, // Higher number = movement amplified
+                                    end: 0 // Go back to the initial position
+                                },
+                            },
+                        })
+                        tl.fromTo(image, {
+                            rotate: 0
+                        }, {
+                            duration: 0.4,
+                            rotate: (Math.random() - 0.5) * 30, // Returns a value between -15 & 15
+                            yoyo: true,
+                            repeat: 1,
+                            ease: 'power1.inOut' // Will slow at the begin and the end
+                        }, '<') // The animation starts at the same time as the previous tween
+                    }
+                })
+            })
+        } else {
+            console.warn("Element with class 'mwg_effect000' not found. Mouse wave gallery effect will not be initialized.");
+        }
+    }
+
+
+    // Initialize all functionalities when the DOM is ready
     setupAudioInteraction();
     initSlideshow();
     startContinuousConfettiPoppers();
-    initDraggableElements(); // Initialize both draggable elements
+    initDraggableElements(); // Initialize both draggable elements (cake and farsu)
+    initMouseWaveGallery(); // Initialize the new mouse wave gallery section
 });
-
-// Slideshow Initialization Function (Unchanged from previous versions)
-function initSlideshow() {
-    const sections = gsap.utils.toArray(".slide");
-    const images = gsap.utils.toArray(".image").reverse();
-    const slideImages = gsap.utils.toArray(".slide__img");
-    const outerWrappers = gsap.utils.toArray(".slide__outer");
-    const innerWrappers = gsap.utils.toArray(".slide__inner");
-    const count = document.querySelector(".count");
-    const interactiveSection = document.querySelector(".interactive-section-wrapper");
-    const wrap = gsap.utils.wrap(0, sections.length);
-    let currentIndex = 0;
-    let slideInterval;
-    let animating = false;
-
-    // Check if elements exist before setting GSAP properties
-    if (outerWrappers.length) gsap.set(outerWrappers, { xPercent: 100 });
-    if (innerWrappers.length) gsap.set(innerWrappers, { xPercent: -100 });
-
-    const firstSlideOuter = document.querySelector(".slide:nth-of-type(1) .slide__outer");
-    const firstSlideInner = document.querySelector(".slide:nth-of-type(1) .slide__inner");
-    const firstSlideHeading = document.querySelector(".slide:nth-of-type(1) .slide__heading");
-
-    if (firstSlideOuter) gsap.set(firstSlideOuter, { xPercent: 0 });
-    if (firstSlideInner) gsap.set(firstSlideInner, { xPercent: 0 });
-    if (firstSlideHeading) gsap.set(firstSlideHeading, { "--width": 200, xPercent: 0 });
-
-
-    function gotoSection(index, direction) {
-        if (animating) return;
-        animating = true;
-
-        index = wrap(index);
-
-        let tl = gsap.timeline({
-            defaults: { duration: 0.8, ease: "expo.inOut" },
-            onComplete: () => {
-                animating = false;
-            }
-        });
-
-        let currentSection = sections[currentIndex];
-        let heading = currentSection ? currentSection.querySelector(".slide__heading") : null;
-        let nextSection = sections[index];
-        let nextHeading = nextSection ? nextSection.querySelector(".slide__heading") : null;
-
-        gsap.set([sections, images], { zIndex: 0, autoAlpha: 0 });
-        // Ensure elements exist before setting
-        if (sections[currentIndex] && images[index]) {
-            gsap.set([sections[currentIndex], images[index]], { zIndex: 1, autoAlpha: 1 });
-        }
-        if (sections[index] && images[currentIndex]) {
-            gsap.set([sections[index], images[currentIndex]], { zIndex: 2, autoAlpha: 1 });
-        }
-
-
-        tl
-            .to(count, {
-                innerText: index + 1,
-                duration: 0.4,
-                snap: { innerText: 1 },
-                ease: "power2.out"
-            }, 0.25)
-            .fromTo(
-                outerWrappers[index],
-                { xPercent: 100 * direction },
-                { xPercent: 0 },
-                0
-            )
-            .fromTo(
-                innerWrappers[index],
-                { xPercent: -100 * direction },
-                { xPercent: 0 },
-                0
-            );
-
-        if (heading) { // Only animate if heading exists
-            tl.to(
-                heading,
-                { "--width": 800, xPercent: 30 * direction },
-                0
-            );
-        }
-
-        if (nextHeading) { // Only animate if nextHeading exists
-            tl.fromTo(
-                nextHeading,
-                { "--width": 800, xPercent: -30 * direction },
-                { "--width": 200, xPercent: 0 },
-                0
-            );
-        }
-
-        tl
-            .fromTo(
-                images[index],
-                { xPercent: 125 * direction, scaleX: 1.5, scaleY: 1.3 },
-                { xPercent: 0, scaleX: 1, scaleY: 1 },
-                0
-            )
-            .fromTo(
-                images[currentIndex],
-                { xPercent: 0, scaleX: 1, scaleY: 1 },
-                { xPercent: -125 * direction, scaleX: 1.5, scaleY: 1.3 },
-                0
-            )
-            .fromTo(
-                slideImages[index],
-                { scale: 2 },
-                { scale: 1 },
-                0
-            );
-
-        currentIndex = index;
-        resetSlideInterval();
-    }
-
-    function startSlideInterval() {
-        slideInterval = setInterval(() => gotoSection(currentIndex + 1, +1), 3000);
-    }
-
-    function resetSlideInterval() {
-        clearInterval(slideInterval);
-        startSlideInterval();
-    }
-
-    startSlideInterval();
-
-    if (interactiveSection) { // Ensure interactiveSection exists before creating observer
-        Observer.create({
-            target: interactiveSection,
-            type: "wheel,touch,pointer",
-            preventDefault: true,
-            wheelSpeed: -1,
-            onUp: () => {
-                if (animating) return;
-                gotoSection(currentIndex + 1, +1);
-            },
-            onDown: () => {
-                if (animating) return;
-                gotoSection(currentIndex - 1, -1);
-            },
-            tolerance: 10
-        });
-    }
-
-    document.addEventListener("keydown", function(e) {
-        if (animating) return;
-
-        if ((e.code === "ArrowUp" || e.code === "ArrowLeft")) {
-            gotoSection(currentIndex - 1, -1);
-        }
-        if ((e.code === "ArrowDown" || e.code === "ArrowRight" || e.code === "Space" || e.code === "Enter")) {
-            gotoSection(currentIndex + 1, 1);
-        }
-    });
-}
