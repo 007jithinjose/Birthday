@@ -831,11 +831,162 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+// --- Balloons Floating Effect ---
+function initBalloons() {
+    const container = document.querySelector('.balloons-container');
+    if (!container) return;
 
+    const colors = [
+        '#ff7597', '#ff7eb3', '#ff65a3', 
+        '#7afcff', '#feff9c', '#fff740',
+        '#ff9a8b', '#ff65a5', '#ff6b8b',
+        '#6fc3df', '#e0f9b5', '#a5dee5'
+    ];
+    const balloonCount = 15;
+    let balloons = [];
+    let balloonInterval;
+
+    function createBalloon() {
+        const balloon = document.createElement('div');
+        balloon.className = 'balloon';
+        
+        const string = document.createElement('div');
+        string.className = 'balloon-string';
+        
+        balloon.appendChild(string);
+        container.appendChild(balloon);
+        
+        // Random properties
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const size = gsap.utils.random(60, 100);
+        const startX = gsap.utils.random(0, window.innerWidth);
+        const startY = window.innerHeight + size;
+        const floatDuration = gsap.utils.random(15, 25);
+        const swayAmount = gsap.utils.random(50, 150);
+        
+        // Style the balloon
+        balloon.style.backgroundColor = color;
+        balloon.style.width = `${size}px`;
+        balloon.style.height = `${size * 1.25}px`;
+        
+        // Initial position
+        gsap.set(balloon, {
+            x: startX,
+            y: startY
+        });
+        
+        // Floating animation
+        const floatTween = gsap.to(balloon, {
+            y: -size * 2,
+            duration: floatDuration,
+            ease: "none",
+            onComplete: () => {
+                // Remove balloon when it reaches top
+                balloon.remove();
+                balloons = balloons.filter(b => b.element !== balloon);
+            }
+        });
+        
+        // Swaying animation
+        const swayTween = gsap.to(balloon, {
+            x: `+=${swayAmount}`,
+            duration: gsap.utils.random(3, 6),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+        
+        // Click interaction
+        balloon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popBalloon(balloon, e.clientX, e.clientY);
+        });
+        
+        balloons.push({
+            element: balloon,
+            floatTween: floatTween,
+            swayTween: swayTween
+        });
+    }
+
+    function popBalloon(balloon, x, y) {
+        // Create confetti burst
+        const burstCount = 20;
+        const burstParticles = [];
+        const color = balloon.style.backgroundColor;
+        
+        for (let i = 0; i < burstCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'balloon-particle';
+            particle.style.backgroundColor = color;
+            container.appendChild(particle);
+            
+            gsap.set(particle, {
+                x: x,
+                y: y,
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%'
+            });
+            
+            gsap.to(particle, {
+                x: x + gsap.utils.random(-100, 100),
+                y: y + gsap.utils.random(-100, 100),
+                opacity: 0,
+                duration: 1,
+                onComplete: () => particle.remove()
+            });
+        }
+        
+        // Remove balloon
+        const balloonObj = balloons.find(b => b.element === balloon);
+        if (balloonObj) {
+            balloonObj.floatTween.kill();
+            balloonObj.swayTween.kill();
+            balloons = balloons.filter(b => b !== balloonObj);
+        }
+        balloon.remove();
+    }
+
+    // Initial balloons
+    for (let i = 0; i < balloonCount; i++) {
+        createBalloon();
+    }
+
+    // Continuous balloon creation
+    balloonInterval = setInterval(() => {
+        if (balloons.length < balloonCount * 1.5) { // Keep some buffer
+            createBalloon();
+        }
+    }, 2000);
+
+    // Cleanup on window resize
+    window.addEventListener('resize', () => {
+        balloons.forEach(balloon => {
+            balloon.floatTween.kill();
+            balloon.swayTween.kill();
+            balloon.element.remove();
+        });
+        balloons = [];
+        clearInterval(balloonInterval);
+        
+        // Reinitialize
+        for (let i = 0; i < balloonCount; i++) {
+            createBalloon();
+        }
+        balloonInterval = setInterval(() => {
+            if (balloons.length < balloonCount * 1.5) {
+                createBalloon();
+            }
+        }, 2000);
+    });
+}
     // Initialize all functionalities when the DOM is ready
     setupAudioInteraction();
     initSlideshow();
     startContinuousConfettiPoppers();
     initDraggableElements(); // Initialize both draggable elements (cake and farsu)
     initMouseWaveGallery(); // Initialize the new mouse wave gallery section
+    initBalloons();
+
 });
