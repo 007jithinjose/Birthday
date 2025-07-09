@@ -161,6 +161,26 @@ body {
     position: relative;
 }
 
+/* ================ SLIDE IMAGE POSITIONING ================ */
+.slide__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Default center position */
+    object-position: 50% 50%; 
+}
+
+/* Custom positions per slide - adjust these values */
+.slide:nth-of-type(1) .slide__img {
+    object-position: 20% 20%; /* Example: focus right-of-center */
+}
+.slide:nth-of-type(2) .slide__img {
+    object-position: 70% 50%; /* Example: focus left and higher */
+}
+.slide:nth-of-type(3) .slide__img {
+    object-position: 40% 80%; /* Example: focus left and lower */
+}
+
 /* Slide background colors based on your theme */
 .slide:nth-of-type(1) .slide__content {
     background: linear-gradient(135deg, var(--darker-bg) 0%, var(--primary-variant) 100%);
@@ -208,12 +228,25 @@ body {
     align-self: center;
 }
 
+/* ================ COLLAGE IMAGE POSITIONING ================ */
 .overlay__img-cont img {
     position: absolute;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center center;
+    /* Default center position */
+    object-position: 50% 50%;
+}
+
+/* Custom positions per collage image - adjust these values */
+.overlay__img-cont img:nth-child(1) {
+    object-position: 20% 40%; /* Example: top-left focus */
+}
+.overlay__img-cont img:nth-child(2) {
+    object-position: 90% 50%; /* Example: right-center focus */
+}
+.overlay__img-cont img:nth-child(3) {
+    object-position: 50% 40%; /* Example: bottom-center focus */
 }
 
 .overlay__count {
@@ -480,8 +513,8 @@ body {
         gap: 2vw;
     }
     .mwg_effect000 .medias img {
-        width: 18vw;
-        height: 18vw;
+        width: 20vw;
+        height: 20vw;
     }
 }
 
@@ -707,5 +740,43 @@ body {
     /* NEW: Farsu Image Responsive Adjustments */
     .farsu-image {
         width: 50px;
+    }
+}
+
+/* ================ RESPONSIVE IMAGE POSITIONING ================ */
+/* Add these media queries at the very end of your file */
+
+/* Tablet adjustments for slide images */
+@media (max-width: 991.98px) {
+    .slide__img {
+        object-position: 50% 30%; /* Slightly higher on tablets */
+    }
+}
+
+/* Mobile adjustments for slide images */
+@media (max-width: 767.98px) {
+    .slide__img {
+        object-position: 50% 20%; /* Even higher on mobile */
+    }
+}
+
+/* Tablet adjustments for collage images */
+@media (max-width: 991.98px) {
+    .overlay__img-cont img:nth-child(1) {
+        object-position: 30% 40%;
+    }
+    .overlay__img-cont img:nth-child(2) {
+        object-position: 70% 60%;
+    }
+    .overlay__img-cont img:nth-child(3) {
+        object-position: 50% 80%;
+    }
+}
+
+/* Mobile adjustments for collage images */
+@media (max-width: 767.98px) {
+    .overlay__img-cont img {
+        /* Unified position for small screens */
+        object-position: 50% 30% !important;
     }
 }
