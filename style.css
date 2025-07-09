@@ -240,10 +240,10 @@ body {
 
 /* Custom positions per collage image - adjust these values */
 .overlay__img-cont img:nth-child(1) {
-    object-position: 20% 40%; /* Example: top-left focus */
+    object-position: 20% 38%; /* Example: top-left focus */
 }
 .overlay__img-cont img:nth-child(2) {
-    object-position: 90% 50%; /* Example: right-center focus */
+    object-position: 90% 42%; /* Example: right-center focus */
 }
 .overlay__img-cont img:nth-child(3) {
     object-position: 50% 40%; /* Example: bottom-center focus */
