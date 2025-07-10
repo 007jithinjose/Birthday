@@ -397,7 +397,7 @@ body {
     height: 300px; /* Adjust height as needed */
     margin-top: 50px; /* Space it from messages section */
     margin-bottom: 50px; /* Space it from content below if any */
-    overflow: hidden; /* Keep the draggable cake inside its bounds */
+    /*overflow: hidden;  Keep the draggable cake inside its bounds */
     border-radius: 15px; /* Matches other sections */
 }
 
@@ -420,7 +420,7 @@ body {
 
 /* NEW: Farsu Image Styles */
 .farsu-image {
-    width: 80px; /* Smaller than cake, adjust as needed */
+    width: 140px; /* Smaller than cake, adjust as needed */
     height: auto; /* Maintain aspect ratio */
     position: absolute; /* Essential for Draggable to work */
     cursor: grab; /* Indicates it's draggable */
@@ -482,7 +482,7 @@ body {
 
 
 .mwg_effect000 .button img {
-    width: 22px;
+    width: 24px;
     height: auto;
     display: block;
 }
@@ -493,8 +493,8 @@ body {
     gap: 1vw;
 }
 .mwg_effect000 .medias img {
-    width: 11vw;
-    height: 11vw;
+    width: 12vw;
+    height: 12vw;
     object-fit: contain;
     border-radius: 4%;
     display: block;
@@ -635,7 +635,7 @@ body {
 
     /* NEW: Farsu Image Responsive Adjustments */
     .farsu-image {
-        width: 100px;
+        width: 140px;
     }
 }
 

@@ -328,286 +328,244 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- End Function for Continuous Falling Confetti with Party Popper Effect ---
 
     // --- Draggable Birthday Cake and Following Farsu Functionality ---
-    function initDraggableElements() {
-        const cakeImage = document.querySelector('.cake-image');
-        const farsuImage = document.querySelector('.farsu-image'); // Get the Farsu image
-        const glossyBackground = document.querySelector('#draggable-cake-section');
+  // --- Draggable Birthday Cake and Following Farsu Functionality ---
+function initDraggableElements() {
+    const cakeImage = document.querySelector('.cake-image');
+    const farsuImage = document.querySelector('.farsu-image');
+    const glossyBackground = document.querySelector('#draggable-cake-section');
 
-        if (!cakeImage || !glossyBackground || !farsuImage) {
-            console.warn("One or more draggable elements or their container not found. Draggable functionality will not be initialized.");
-            return;
-        }
+    if (!cakeImage || !glossyBackground || !farsuImage) {
+        console.warn("One or more draggable elements or their container not found. Draggable functionality will not be initialized.");
+        return;
+    }
 
-        // Set transform-origin immediately for both images
-        gsap.set(cakeImage, { transformOrigin: "top left" });
-        gsap.set(farsuImage, { transformOrigin: "top left" });
+    // Set transform-origin immediately for both images
+    gsap.set(cakeImage, { transformOrigin: "center center" });
+    gsap.set(farsuImage, { transformOrigin: "center center" });
 
-        let cakeMovementTween; // Variable to hold the cake's random movement tween
-        let farsuMovementTween; // Variable to hold Farsu's random movement tween
-        let cakeDraggableInstance; // Variable to hold the Cake Draggable instance
-        let farsuDraggableInstance; // Variable to hold the Farsu Draggable instance
+    let cakeMovementTween;
+    let farsuMovementTween;
+    let cakeDraggableInstance;
+    let farsuDraggableInstance;
 
-        function setupInteractions() {
-            // Create the Draggable instance for the Cake.
-            cakeDraggableInstance = Draggable.create(cakeImage, {
-                type: "x,y",
-                bounds: glossyBackground,
-                inertia: {
-                    bounce: 0.5
-                },
-                edgeResistance: 0.7,
-                onPress: function() {
-                    if (cakeMovementTween) {
-                        cakeMovementTween.kill();
-                    }
-                    if (farsuMovementTween) { // Also kill Farsu's movement when cake is pressed
-                        farsuMovementTween.kill();
-                    }
-                    gsap.to(this.target, { scale: 1.1, duration: 0.1, ease: "power2.out" });
-                    // When cake is dragged, Farsu should follow instantly without its own random movement
-                    gsap.to(farsuImage, {
-                        x: this.x + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
-                        y: this.y + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
-                        duration: 0.1, // Instant follow
-                        overwrite: true
-                    });
-                },
-                onDrag: function() {
-                    // During drag, Farsu follows the cake
-                    gsap.to(farsuImage, {
-                        x: this.x + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
-                        y: this.y + gsap.utils.random(-10, 10), // Offset slightly, reduced shaking
-                        duration: 0.1, // Keep it snappy
-                        overwrite: true
-                    });
-                },
-                onRelease: function() {
-                    gsap.to(this.target, { scale: 1, duration: 0.2, ease: "power2.out" });
-                    startRandomMovement(this.target, this, 'cake'); // Restart cake's random movement
-                },
-                onDragEnd: function() {
-                    startRandomMovement(this.target, this, 'cake'); // Ensure movement restarts
-                },
-                onThrowUpdate: function() { // Keep Farsu following during cake's inertia
-                    gsap.set(farsuImage, {
-                        x: this.x + gsap.utils.random(-10, 10), // Reduced shaking
-                        y: this.y + gsap.utils.random(-10, 10)  // Reduced shaking
-                    });
+    function setupInteractions() {
+        // Create the Draggable instance for the Cake
+        cakeDraggableInstance = Draggable.create(cakeImage, {
+            type: "x,y",
+            bounds: glossyBackground,
+            inertia: {
+                bounce: 0.5
+            },
+            edgeResistance: 0.7,
+            onPress: function() {
+                if (cakeMovementTween) cakeMovementTween.kill();
+                if (farsuMovementTween) farsuMovementTween.kill();
+                gsap.to(this.target, { scale: 1.1, duration: 0.1, ease: "power2.out" });
+                gsap.to(farsuImage, {
+                    x: this.x + gsap.utils.random(-10, 10),
+                    y: this.y + gsap.utils.random(-10, 10),
+                    duration: 0.1,
+                    overwrite: true
+                });
+            },
+            onDrag: function() {
+                gsap.to(farsuImage, {
+                    x: this.x + gsap.utils.random(-10, 10),
+                    y: this.y + gsap.utils.random(-10, 10),
+                    duration: 0.1,
+                    overwrite: true
+                });
+            },
+            onRelease: function() {
+                gsap.to(this.target, { scale: 1, duration: 0.2, ease: "power2.out" });
+                startRandomMovement(this.target, this, 'cake');
+            },
+            onDragEnd: function() {
+                startRandomMovement(this.target, this, 'cake');
+            },
+            onThrowUpdate: function() {
+                gsap.set(farsuImage, {
+                    x: this.x + gsap.utils.random(-10, 10),
+                    y: this.y + gsap.utils.random(-10, 10)
+                });
+            }
+        })[0];
+
+        // Create the Draggable instance for Farsu image
+        farsuDraggableInstance = Draggable.create(farsuImage, {
+            type: "x,y",
+            bounds: glossyBackground,
+            inertia: {
+                bounce: 0.8
+            },
+            edgeResistance: 0.8,
+            onPress: function() {
+                if (farsuMovementTween) farsuMovementTween.kill();
+                gsap.to(this.target, { scale: 1.2, duration: 0.1, ease: "power2.out" });
+            },
+            onRelease: function() {
+                gsap.to(this.target, { scale: 1, duration: 0.2, ease: "power2.out" });
+                if (cakeMovementTween && cakeMovementTween.isActive()) {
+                    startFollowingCake(this.target, this, cakeDraggableInstance);
+                } else {
+                    startRandomMovement(this.target, this, 'farsu');
                 }
-            })[0];
-
-            // Create the Draggable instance for Farsu image.
-            // Farsu will primarily follow the cake, but can also be dragged independently.
-            farsuDraggableInstance = Draggable.create(farsuImage, {
-                type: "x,y",
-                bounds: glossyBackground,
-                inertia: {
-                    bounce: 0.8 // More bouncy for a "livelier" follow
-                },
-                edgeResistance: 0.8,
-                onPress: function() {
-                    if (farsuMovementTween) {
-                        farsuMovementTween.kill();
-                    }
-                    gsap.to(this.target, { scale: 1.2, duration: 0.1, ease: "power2.out" });
-                },
-                onRelease: function() {
-                    gsap.to(this.target, { scale: 1, duration: 0.2, ease: "power2.out" });
-                    // After manual drag, resume following the cake's position if it's moving
-                    if (cakeMovementTween && cakeMovementTween.isActive()) {
-                        startFollowingCake(this.target, this, cakeDraggableInstance);
-                    } else {
-                        // If cake is static after its own movement, start Farsu's random movement relative to it
-                        startRandomMovement(this.target, this, 'farsu');
-                    }
-                },
-                onDragEnd: function() {
-                    if (cakeMovementTween && cakeMovementTween.isActive()) {
-                        startFollowingCake(this.target, this, cakeDraggableInstance);
-                    } else {
-                        startRandomMovement(this.target, this, 'farsu');
-                    }
+            },
+            onDragEnd: function() {
+                if (cakeMovementTween && cakeMovementTween.isActive()) {
+                    startFollowingCake(this.target, this, cakeDraggableInstance);
+                } else {
+                    startRandomMovement(this.target, this, 'farsu');
                 }
-            })[0];
+            }
+        })[0];
 
-            // Set initial positions (center for cake, slightly offset for farsu)
-            const centerX = (cakeDraggableInstance.maxX + cakeDraggableInstance.minX) / 2;
-            const centerY = (cakeDraggableInstance.maxY + cakeDraggableInstance.minY) / 2;
+        // Calculate center positions after a slight delay to ensure layout is complete
+        setTimeout(() => {
+            const containerRect = glossyBackground.getBoundingClientRect();
+            const cakeRect = cakeImage.getBoundingClientRect();
+            
+            const centerX = (containerRect.width - cakeRect.width) / 2;
+            const centerY = (containerRect.height - cakeRect.height) / 2;
+            
+            // Set initial positions
+            gsap.set(cakeImage, { x: centerX, y: centerY });
+            gsap.set(farsuImage, { 
+                x: centerX + gsap.utils.random(-30, 30),
+                y: centerY + gsap.utils.random(-30, 30)
+            });
 
-            cakeDraggableInstance.x = centerX;
-            cakeDraggableInstance.y = centerY;
+            // Update Draggable instances with new positions
             cakeDraggableInstance.update();
-
-            farsuDraggableInstance.x = centerX + gsap.utils.random(-30, 30); // Start farsu near cake
-            farsuDraggableInstance.y = centerY + gsap.utils.random(-30, 30);
             farsuDraggableInstance.update();
 
-            // Start the initial random movement for the cake
+            // Start the initial random movement for both cake and farsu
             startRandomMovement(cakeImage, cakeDraggableInstance, 'cake');
-            // Farsu will start following the cake right away
             startFollowingCake(farsuImage, farsuDraggableInstance, cakeDraggableInstance);
-        }
-
-        // Function to start either random movement or following behavior
-        function startRandomMovement(target, draggable, type) {
-            const buffer = 20;
-
-            let currentTween;
-            if (type === 'cake') {
-                currentTween = cakeMovementTween;
-            } else { // type === 'farsu'
-                currentTween = farsuMovementTween;
-            }
-
-            if (currentTween) {
-                currentTween.kill();
-            }
-
-            const targetX = gsap.utils.random(
-                draggable.minX + buffer,
-                draggable.maxX - buffer
-            );
-            const targetY = gsap.utils.random(
-                draggable.minY + buffer,
-                draggable.maxY - buffer
-            );
-
-            const velocity = gsap.utils.random(200, 400); // Slightly less velocity for independent random movement
-            const angle = Math.atan2(targetY - draggable.y, targetX - draggable.x) * 180 / Math.PI;
-
-            currentTween = gsap.to(target, {
-                duration: gsap.utils.random(1.5, 3), // Longer duration for more gentle movement
-                physics2D: {
-                    velocity: velocity,
-                    angle: angle,
-                    gravity: 0,
-                    friction: 0.1,
-                    bounce: draggable.vars.inertia.bounce
-                },
-                ease: "none",
-                onComplete: () => {
-                    startRandomMovement(target, draggable, type); // Loop the random movement
-                },
-                overwrite: "auto"
-            });
-
-            if (type === 'cake') {
-                cakeMovementTween = currentTween;
-            } else {
-                farsuMovementTween = currentTween;
-            }
-        }
-
-        // Function for Farsu to follow the cake
-        function startFollowingCake(farsuTarget, farsuDraggable, cakeDraggable) {
-            if (farsuMovementTween) {
-                farsuMovementTween.kill(); // Kill any existing independent movement
-            }
-
-            // Instead of an Observer on the cake's target, which might only fire on interaction,
-            // let's create a continuous tween for Farsu that always aims for the cake's position.
-            // This makes Farsu 'chase' the cake.
-            farsuMovementTween = gsap.to(farsuTarget, {
-                duration: 0.8, // How quickly Farsu tries to catch up (adjust as needed)
-                ease: "power2.out", // Smooth easing for the chase
-                repeat: -1, // Keep repeating indefinitely
-                onUpdate: function() {
-                    // Calculate a target position for Farsu relative to the cake
-                    const cakeX = cakeDraggable.x;
-                    const cakeY = cakeDraggable.y;
-
-                    // Add some subtle random offset for a playful follow, reduced to lessen "shaking"
-                    const offsetX = gsap.utils.random(-10, 10);
-                    const offsetY = gsap.utils.random(-10, 10);
-
-                    const farsuTargetX = cakeX + offsetX;
-                    const farsuTargetY = cakeY + offsetY;
-
-                    // Ensure Farsu stays within its own bounds
-                    const constrainedX = gsap.utils.clamp(farsuDraggable.minX, farsuDraggable.maxX, farsuTargetX);
-                    const constrainedY = gsap.utils.clamp(farsuDraggable.minY, farsuDraggable.maxY, farsuTargetY);
-
-                    // Update Farsu's position directly or use a subtle physics tween for the next small step
-                    // Using a small physics tween here can create the bouncy effect.
-                    gsap.to(farsuTarget, {
-                        x: constrainedX,
-                        y: constrainedY,
-                        duration: 0.3, // Short duration for a responsive follow
-                        physics2D: {
-                            velocity: 100, // Small velocity
-                            angle: Math.atan2(constrainedY - farsuDraggable.y, constrainedX - farsuDraggable.x) * 180 / Math.PI,
-                            gravity: 0,
-                            friction: 0.1,
-                            bounce: farsuDraggable.vars.inertia.bounce * 0.5 // Less bounce for smoother follow
-                        },
-                        ease: "none", // Let physics handle the easing
-                        overwrite: true // Important to avoid conflicts
-                    });
-                },
-                overwrite: "auto" // This tween itself should be overwriteable
-            });
-
-            // Add a listener to the cake's Draggable instance to ensure Farsu's follow is active
-            // whenever the cake is dragged or thrown.
-            cakeDraggable.addEventListener("drag", () => {
-                // When cake is dragged, Farsu should follow instantly, cancelling its physics tween briefly
-                gsap.to(farsuTarget, {
-                    x: cakeDraggable.x + gsap.utils.random(-10, 10),
-                    y: cakeDraggable.y + gsap.utils.random(-10, 10),
-                    duration: 0.1, // Instant follow during drag
-                    overwrite: true
-                });
-                // Ensure the main following tween is active
-                if (farsuMovementTween && !farsuMovementTween.isActive()) {
-                    farsuMovementTween.restart(true);
-                }
-            });
-
-            cakeDraggable.addEventListener("throwUpdate", () => {
-                // During throw (inertia), Farsu continues to follow
-                gsap.to(farsuTarget, {
-                    x: cakeDraggable.x + gsap.utils.random(-10, 10),
-                    y: cakeDraggable.y + gsap.utils.random(-10, 10),
-                    duration: 0.1, // Keep it snappy
-                    overwrite: true
-                });
-                // Ensure the main following tween is active
-                if (farsuMovementTween && !farsuMovementTween.isActive()) {
-                    farsuMovementTween.restart(true);
-                }
-            });
-
-            // When cake stops moving (either by drag end or random tween completion),
-            // Farsu should check its state.
-            cakeDraggable.addEventListener("dragend", () => {
-                if (!cakeDraggable.isDragging) { // If cake is no longer being dragged
-                    // Resume the continuous follow tween or restart its random movement if cake is truly idle
-                    if (farsuMovementTween) {
-                        farsuMovementTween.restart(true); // Restart the chase
-                    } else {
-                        // Fallback in case tween was killed unexpectedly
-                        startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
-                    }
-                }
-            });
-
-            // Also add a listener for when the cake's *random movement* tween completes
-            // This is important because the cake's movement isn't only from user drag/throw.
-            // For simplicity, let's assume `cakeMovementTween` is accessible.
-            if (cakeMovementTween) {
-                cakeMovementTween.eventCallback("onComplete", () => {
-                    // When cake's random movement stops, and it's not being dragged,
-                    // Farsu should start its own random movement if not already following.
-                    if (!cakeDraggable.isDragging && !farsuDraggable.isDragging) {
-                        startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
-                    }
-                });
-            }
-        }
-
-        // Delay the setup slightly to ensure all CSS and layout are fully rendered.
-        gsap.delayedCall(0.2, setupInteractions); // 200ms delay
+        }, 100); // 100ms delay to ensure layout is complete
     }
+
+    function startRandomMovement(target, draggable, type) {
+        const buffer = 20;
+        const currentTween = type === 'cake' ? cakeMovementTween : farsuMovementTween;
+        if (currentTween) currentTween.kill();
+
+        const targetX = gsap.utils.random(
+            draggable.minX + buffer,
+            draggable.maxX - buffer
+        );
+        const targetY = gsap.utils.random(
+            draggable.minY + buffer,
+            draggable.maxY - buffer
+        );
+
+        const velocity = gsap.utils.random(200, 400);
+        const angle = Math.atan2(targetY - draggable.y, targetX - draggable.x) * 180 / Math.PI;
+
+        const newTween = gsap.to(target, {
+            duration: gsap.utils.random(1.5, 3),
+            physics2D: {
+                velocity: velocity,
+                angle: angle,
+                gravity: 0,
+                friction: 0.1,
+                bounce: draggable.vars.inertia.bounce
+            },
+            ease: "none",
+            onComplete: () => startRandomMovement(target, draggable, type)
+        });
+
+        if (type === 'cake') {
+            cakeMovementTween = newTween;
+        } else {
+            farsuMovementTween = newTween;
+        }
+    }
+
+    function startFollowingCake(farsuTarget, farsuDraggable, cakeDraggable) {
+        if (farsuMovementTween) farsuMovementTween.kill();
+
+        farsuMovementTween = gsap.to(farsuTarget, {
+            duration: 0.8,
+            ease: "power2.out",
+            repeat: -1,
+            onUpdate: function() {
+                const cakeX = cakeDraggable.x;
+                const cakeY = cakeDraggable.y;
+                const offsetX = gsap.utils.random(-10, 10);
+                const offsetY = gsap.utils.random(-10, 10);
+
+                const farsuTargetX = gsap.utils.clamp(
+                    farsuDraggable.minX,
+                    farsuDraggable.maxX,
+                    cakeX + offsetX
+                );
+                const farsuTargetY = gsap.utils.clamp(
+                    farsuDraggable.minY,
+                    farsuDraggable.maxY,
+                    cakeY + offsetY
+                );
+
+                gsap.to(farsuTarget, {
+                    x: farsuTargetX,
+                    y: farsuTargetY,
+                    duration: 0.3,
+                    physics2D: {
+                        velocity: 100,
+                        angle: Math.atan2(farsuTargetY - farsuDraggable.y, farsuTargetX - farsuDraggable.x) * 180 / Math.PI,
+                        gravity: 0,
+                        friction: 0.1,
+                        bounce: farsuDraggable.vars.inertia.bounce * 0.5
+                    },
+                    ease: "none"
+                });
+            }
+        });
+
+        cakeDraggable.addEventListener("drag", () => {
+            gsap.to(farsuTarget, {
+                x: cakeDraggable.x + gsap.utils.random(-10, 10),
+                y: cakeDraggable.y + gsap.utils.random(-10, 10),
+                duration: 0.1
+            });
+            if (farsuMovementTween && !farsuMovementTween.isActive()) {
+                farsuMovementTween.restart(true);
+            }
+        });
+
+        cakeDraggable.addEventListener("throwUpdate", () => {
+            gsap.to(farsuTarget, {
+                x: cakeDraggable.x + gsap.utils.random(-10, 10),
+                y: cakeDraggable.y + gsap.utils.random(-10, 10),
+                duration: 0.1
+            });
+            if (farsuMovementTween && !farsuMovementTween.isActive()) {
+                farsuMovementTween.restart(true);
+            }
+        });
+
+        cakeDraggable.addEventListener("dragend", () => {
+            if (!cakeDraggable.isDragging) {
+                if (farsuMovementTween) {
+                    farsuMovementTween.restart(true);
+                } else {
+                    startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
+                }
+            }
+        });
+
+        if (cakeMovementTween) {
+            cakeMovementTween.eventCallback("onComplete", () => {
+                if (!cakeDraggable.isDragging && !farsuDraggable.isDragging) {
+                    startRandomMovement(farsuTarget, farsuDraggable, 'farsu');
+                }
+            });
+        }
+    }
+
+    // Initialize with a slight delay to ensure everything is ready
+    setTimeout(setupInteractions, 100);
+}
     // --- End Draggable Birthday Cake and Following Farsu Functionality ---
 
     // Slideshow Initialization Function
