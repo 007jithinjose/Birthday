@@ -4,26 +4,24 @@
     src: url("https://res.cloudinary.com/dldmpwpcp/raw/upload/v1566406079/BandeinsStrangeVariable_esetvq.ttf");
 }
 
-/* Color Theme - Based on your provided dark theme */
 :root {
     --dark-bg: #121212;
     --darker-bg: #0a0a0a;
-    --primary: #bb86fc; /* A vibrant purple */
-    --primary-variant: #3700b3; /* A darker purple */
-    --secondary: #03dac6; /* A bright teal */
-    --text: #e1e1e1; /* Light grey text */
-    --text-secondary: #a1a1a1; /* Muted grey text */
-    --message-bg: rgba(30, 30, 30, 0.8); /* Semi-transparent dark for message box */
+    --primary: #bb86fc; 
+    --primary-variant: #3700b3; 
+    --secondary: #03dac6; 
+    --text: #e1e1e1; 
+    --text-secondary: #a1a1a1; 
+    --message-bg: rgba(30, 30, 30, 0.8); 
 }
 
-/* Base Styles */
 * {
     box-sizing: border-box;
-    user-select: none; /* Prevents text selection during interaction */
+    user-select: none; 
 }
 
 ::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for a cleaner look */
+    display: none; 
 }
 
 figure {
@@ -35,18 +33,17 @@ html,
 body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Prevent horizontal scroll */
-    min-height: 100vh; /* Ensure body takes at least full viewport height */
+    overflow-x: hidden; 
+    min-height: 100vh;
 }
 
 body {
     font-family: "Sora", sans-serif;
     color: var(--text);
     background: var(--dark-bg);
-    overflow-y: auto; /* Allow vertical scrolling on the body */
+    overflow-y: auto;
 }
 
-/* Main Container for all content on the page */
 .main-container {
     position: relative;
     width: 100%;
@@ -58,7 +55,6 @@ body {
     padding-bottom: 50px;
 }
 
-/* New Wrapper for the Interactive Section (Slides, Overlay, Confetti) */
 .interactive-section-wrapper {
     position: relative;
     width: 90%;
@@ -72,7 +68,6 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Image Styles for object-fit: cover */
 .img-cover {
     width: 100%;
     height: 100%;
@@ -80,7 +75,6 @@ body {
     object-position: center center;
 }
 
-/* Slide Section Styling (Replicating Sample Layout) */
 .slide {
     height: 100%;
     width: 100%;
@@ -90,12 +84,10 @@ body {
     visibility: hidden;
 }
 
-/* First slide visible by default for initial load */
 .slide:nth-of-type(1) {
     visibility: visible;
 }
 
-/* Ensure first slide's wrappers are correctly positioned immediately */
 .slide:nth-of-type(1) .slide__outer {
     transform: translateX(0%);
 }
@@ -161,27 +153,24 @@ body {
     position: relative;
 }
 
-/* ================ SLIDE IMAGE POSITIONING ================ */
 .slide__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Default center position */
     object-position: 50% 50%; 
 }
 
-/* Custom positions per slide - adjust these values */
 .slide:nth-of-type(1) .slide__img {
-    object-position: 20% 20%; /* Example: focus right-of-center */
+    object-position: 20% 20%;
 }
 .slide:nth-of-type(2) .slide__img {
-    object-position: 70% 50%; /* Example: focus left and higher */
+    object-position: 70% 50%;
 }
 .slide:nth-of-type(3) .slide__img {
-    object-position: 40% 80%; /* Example: focus left and lower */
+    object-position: 40% 80%;
 }
 
-/* Slide background colors based on your theme */
+
 .slide:nth-of-type(1) .slide__content {
     background: linear-gradient(135deg, var(--darker-bg) 0%, var(--primary-variant) 100%);
 }
@@ -194,8 +183,6 @@ body {
     background: linear-gradient(135deg, var(--darker-bg) 0%, #17b978 100%);
 }
 
-
-/* Overlay Section Styling (Replicating Sample Layout) */
 .overlay {
     position: absolute;
     top: 0;
@@ -228,25 +215,22 @@ body {
     align-self: center;
 }
 
-/* ================ COLLAGE IMAGE POSITIONING ================ */
 .overlay__img-cont img {
     position: absolute;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Default center position */
     object-position: 50% 50%;
 }
 
-/* Custom positions per collage image - adjust these values */
 .overlay__img-cont img:nth-child(1) {
-    object-position: 20% 38%; /* Example: top-left focus */
+    object-position: 20% 38%; 
 }
 .overlay__img-cont img:nth-child(2) {
-    object-position: 90% 42%; /* Example: right-center focus */
+    object-position: 90% 42%; 
 }
 .overlay__img-cont img:nth-child(3) {
-    object-position: 50% 40%; /* Example: bottom-center focus */
+    object-position: 50% 40%; 
 }
 
 .overlay__count {
@@ -259,9 +243,8 @@ body {
     color: var(--primary);
 }
 
-/* Confetti - Moved to be relative to main-container for full page fall */
 .confetti-container {
-    position: fixed; /* Changed to fixed for full viewport coverage */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -271,20 +254,17 @@ body {
     overflow: hidden;
 }
 
-/* Added .dot for the new click-triggered confetti */
 .dot {
     position: absolute;
-    background-color: #0ae448; /* Example color, will be overridden by JS */
+    background-color: #0ae448;
     width: 2vw;
     height: 2vw;
     border-radius: 50%;
     will-change: transform, opacity;
     pointer-events: none;
-    z-index: 1000; /* Ensure dots are above other content */
+    z-index: 1000; 
 }
 
-
-/* Message Section Styling */
 .message-section {
     width: 90%;
     max-width: 1200px;
@@ -326,7 +306,6 @@ body {
     max-width: 600px;
 }
 
-/* Highlight colors */
 .highlight-primary {
     color: var(--primary);
     font-weight: 700;
@@ -359,8 +338,6 @@ body {
     font-weight: 700;
 }
 
-
-/* Music Toggle Button */
 .music-toggle {
     z-index: 1000;
     transition: all 0.3s ease;
@@ -370,15 +347,13 @@ body {
     background-color: var(--primary) !important;
     border: none !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    overflow: hidden; /* Important for SVG to fit */
+    overflow: hidden;
 }
 
-/* Style for the SVG icon inside the button */
 .music-toggle .play-pause-icon {
     width: 100%;
     height: 100%;
-    color: var(--darker-bg); /* Color of the SVG lines */
-    /* Ensure no background on the SVG itself, let the button handle it */
+    color: var(--darker-bg);
     background: none;
 }
 
@@ -388,58 +363,52 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-
-/* NEW DRAGGABLE CAKE CONTAINER STYLES */
 #draggable-cake-section {
-    position: relative; /* Important for positioning the cake inside */
+    position: relative;
     width: 90%;
     max-width: 1200px;
-    height: 300px; /* Adjust height as needed */
-    margin-top: 50px; /* Space it from messages section */
-    margin-bottom: 50px; /* Space it from content below if any */
-    /*overflow: hidden;  Keep the draggable cake inside its bounds */
-    border-radius: 15px; /* Matches other sections */
+    height: 300px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border-radius: 15px;
 }
 
 .glossy-dark-background {
-    background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent */
-    backdrop-filter: blur(5px); /* Glossy blur effect */
-    -webkit-backdrop-filter: blur(5px); /* Safari support */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle white border */
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
 }
 
 .cake-image {
-    width: 180px; /* Example size, adjust based on your image */
-    height: auto; /* Maintain aspect ratio */
-    max-width: 80%; /* Ensure it's responsive */
-    position: absolute; /* Essential for Draggable to work */
-    cursor: grab; /* Indicates it's draggable */
+    width: 180px;
+    height: auto;
+    max-width: 80%;
+    position: absolute;
+    cursor: grab;
     will-change: transform;
 }
 
-/* NEW: Farsu Image Styles */
 .farsu-image {
-    width: 140px; /* Smaller than cake, adjust as needed */
-    height: auto; /* Maintain aspect ratio */
-    position: absolute; /* Essential for Draggable to work */
-    cursor: grab; /* Indicates it's draggable */
+    width: 140px;
+    height: auto;
+    position: absolute;
+    cursor: grab;
     will-change: transform;
-    z-index: 10; /* Ensure it's above the cake slightly if they overlap */
+    z-index: 10;
 }
-/* END NEW DRAGGABLE CAKE CONTAINER STYLES */
 
-/* Mouse Wave Gallery Effect Styles */
 .mwg_effect000 {
     height: 100vh;
     overflow: hidden;
     position: relative;
     display: grid;
     place-items: center;
-    background-color: #1a1721; /* Added a background color for the section */
-    margin-top: 50px; /* Add some spacing from the section above */
-    z-index: 10; /* Higher than balloons */
-    pointer-events: auto; /* Ensure it's interactive */
+    background-color: #1a1721;
+    margin-top: 50px;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .mwg_effect000 .header {
@@ -471,7 +440,7 @@ body {
     display: flex;
     align-items: center;
     width: max-content;
-    cursor: pointer; /* Added cursor for buttons */
+    cursor: pointer;
 }
 .mwg_effect000 .button1 {
     background-color: #232323;
@@ -502,15 +471,14 @@ body {
     will-change: transform;
 }
 
-/* ==================== BALLOONS SECTION ==================== */
 .balloons-section {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    pointer-events: none; /* Make entire section non-interactive by default */
-    z-index: 5; /* Below mwg_effect000 which should be higher */
+    pointer-events: none;
+    z-index: 5;
 }
 
 .balloons-container {
@@ -527,7 +495,7 @@ body {
     cursor: pointer;
     filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
     will-change: transform;
-    pointer-events: auto; /* Make only balloons interactive */
+    pointer-events: auto;
     z-index: 10;
 }
 
@@ -578,9 +546,6 @@ body {
     }
 }
 
-/* Responsive Adjustments (Existing rules, kept for completeness) */
-
-/* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
     .overlay__content,
     .slide__container {
@@ -605,7 +570,6 @@ body {
         grid-area: 1 / 1 / 4 / 10;
     }
 
-    /* Message Section specific adjustments for larger screens */
     .message-section {
         padding: 50px;
     }
@@ -633,16 +597,12 @@ body {
         width: 220px;
     }
 
-    /* NEW: Farsu Image Responsive Adjustments */
     .farsu-image {
         width: 140px;
     }
 }
 
-
-/* Medium devices (tablets, 768px and up) */
 @media (max-width: 991.98px) {
-    /* Interactive section adjustments */
     .interactive-section-wrapper {
         height: clamp(450px, 70vh, 700px);
     }
@@ -668,7 +628,6 @@ body {
         height: 65%;
     }
 
-    /* Message Section specific adjustments */
     .message-section {
         padding: 30px;
     }
@@ -691,16 +650,12 @@ body {
         width: 150px;
     }
 
-    /* NEW: Farsu Image Responsive Adjustments */
     .farsu-image {
         width: 70px;
     }
 }
 
-
-/* Small devices (phones, 576px and up) */
 @media (max-width: 767.98px) {
-    /* Interactive section adjustments */
     .interactive-section-wrapper {
         width: 95%;
         height: clamp(350px, 75vh, 600px);
@@ -723,7 +678,6 @@ body {
         height: 60%;
     }
 
-    /* Message Section specific adjustments */
     .message-section {
         padding: 20px;
         width: 95%;
@@ -750,15 +704,12 @@ body {
         width: 120px;
     }
 
-    /* NEW: Farsu Image Responsive Adjustments */
     .farsu-image {
         width: 60px;
     }
 }
 
-/* Extra small devices (phones, less than 576px) */
 @media (max-width: 575.98px) {
-    /* Interactive section adjustments */
     .interactive-section-wrapper {
         height: clamp(300px, 80vh, 500px);
     }
@@ -796,31 +747,23 @@ body {
     .cake-image {
         width: 100px;
     }
-
-    /* NEW: Farsu Image Responsive Adjustments */
     .farsu-image {
         width: 50px;
     }
 }
 
-/* ================ RESPONSIVE IMAGE POSITIONING ================ */
-/* Add these media queries at the very end of your file */
-
-/* Tablet adjustments for slide images */
 @media (max-width: 991.98px) {
     .slide__img {
-        object-position: 50% 30%; /* Slightly higher on tablets */
+        object-position: 50% 30%;
     }
 }
 
-/* Mobile adjustments for slide images */
 @media (max-width: 767.98px) {
     .slide__img {
-        object-position: 50% 20%; /* Even higher on mobile */
+        object-position: 50% 20%;
     }
 }
 
-/* Tablet adjustments for collage images */
 @media (max-width: 991.98px) {
     .overlay__img-cont img:nth-child(1) {
         object-position: 30% 40%;
@@ -833,10 +776,8 @@ body {
     }
 }
 
-/* Mobile adjustments for collage images */
 @media (max-width: 767.98px) {
     .overlay__img-cont img {
-        /* Unified position for small screens */
         object-position: 50% 30% !important;
     }
 }

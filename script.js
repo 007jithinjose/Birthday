@@ -1,28 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Get CSS variables for confetti colors
     const rootStyles = getComputedStyle(document.documentElement);
     const primaryColor = rootStyles.getPropertyValue('--primary').trim();
     const primaryVariantColor = rootStyles.getPropertyValue('--primary-variant').trim();
     const secondaryColor = rootStyles.getPropertyValue('--secondary').trim();
-
-    // Register ALL GSAP plugins needed for the entire page
-    // Ensure Observer, MorphSVGPlugin, Physics2DPlugin, Draggable, InertiaPlugin are included
     gsap.registerPlugin(Observer, MorphSVGPlugin, Physics2DPlugin, Draggable, InertiaPlugin);
 
-    // Music toggle functionality
     const audio = document.getElementById('birthdayAudio');
     const musicToggle = document.querySelector('.music-toggle');
-    let isPlaying = false; // Controls audio playback state
-    let audioInitiatedOnce = false; // Tracks if audio playback (muted or unmuted) has been attempted
+    let isPlaying = false; 
+    let audioInitiatedOnce = false;
 
-    // --- Play/Pause Icon Morphing Setup ---
     const playPath =
         "M3.5 5L3.50049 3.9468C3.50049 3.177 4.33382 2.69588 5.00049 3.08078L20.0005 11.741C20.6672 12.1259 20.6672 13.0882 20.0005 13.4731L17.2388 15.1412L17.0055 15.2759M3.50049 8L3.50049 21.2673C3.50049 22.0371 4.33382 22.5182 5.00049 22.1333L14.1192 16.9423L14.4074 16.7759";
     const pausePath =
         "M15.5004 4.05859V5.0638V5.58691V8.58691V15.5869V19.5869V21.2549M8.5 3.96094V10.3721V17V19L8.5 21";
 
     let iconPath;
-    if (musicToggle) { // Check if musicToggle exists before trying to query its children
+    if (musicToggle) { 
         if (musicToggle.querySelector('.play-pause-icon') && musicToggle.querySelector('[data-play-pause="path"]')) {
             iconPath = musicToggle.querySelector('[data-play-pause="path"]');
         } else {
@@ -34,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             svgIcon.classList.add("play-pause-icon");
 
             iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            iconPath.setAttribute("d", playPath); // Start with the play path
+            iconPath.setAttribute("d", playPath);
             iconPath.setAttribute("stroke", "currentColor");
             iconPath.setAttribute("stroke-width", "2");
             iconPath.setAttribute("stroke-miterlimit", "16");
@@ -46,10 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
             musicToggle.appendChild(svgIcon);
         }
     }
-    // --- End Play/Pause Icon Morphing Setup ---
 
-
-    // Function to attempt playing audio unmuted
     function enableAudio() {
         if (audioInitiatedOnce && !audio.muted) {
             return;
@@ -88,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Function to remove the one-time global interaction listeners
     function removeInitialInteractionListeners() {
         document.body.removeEventListener('click', handleFirstInteraction);
         const audioObserver = Observer.getById("audioUnmuteObserver");
@@ -98,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to handle the very first user interaction
     function handleFirstInteraction() {
         if (!audioInitiatedOnce) {
             console.log("First user interaction detected. Attempting to unmute audio.");
@@ -107,20 +96,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupAudioInteraction() {
-        // 1. Attempt muted autoplay immediately on page load.
         audio.muted = true;
         audio.play()
             .then(() => {
                 console.log("Muted autoplay successful.");
                 isPlaying = true;
                 audioInitiatedOnce = true;
-                // Only set morphSVG if iconPath exists
                 if (iconPath) {
-                    gsap.set(iconPath, { morphSVG: pausePath }); // Set to pause icon initially as audio is playing (muted)
+                    gsap.set(iconPath, { morphSVG: pausePath }); 
                 }
 
-                // If muted autoplay works, wait for *any* first user interaction to unmute.
-                // These listeners will be removed once audio is unmuted.
                 document.body.addEventListener('click', handleFirstInteraction, { once: true });
                 Observer.create({
                     id: "audioUnmuteObserver",
@@ -134,14 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(mutedError => {
                 console.log("Muted autoplay failed:", mutedError);
-                // Only set morphSVG if iconPath exists
                 if (iconPath) {
-                    gsap.set(iconPath, { morphSVG: playPath }); // Set to play icon if cannot autoplay at all
+                    gsap.set(iconPath, { morphSVG: playPath });
                 }
                 isPlaying = false;
                 audioInitiatedOnce = false;
 
-                // Still need to listen for a first interaction to start playback
                 document.body.addEventListener('click', handleFirstInteraction, { once: true });
                 Observer.create({
                     id: "audioUnmuteObserver",
@@ -153,19 +136,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-        // 2. Music toggle button behavior (primary control after initial setup)
-        // Ensure musicToggle exists before adding event listener
         if (musicToggle) {
             musicToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
 
-                // If audio has not been initiated (unmuted) by any interaction yet,
-                // this click on the button will serve as the first interaction.
                 if (!audioInitiatedOnce) {
                     console.log("Music toggle clicked as initial audio interaction.");
-                    enableAudio(); // This will attempt to unmute and play, also updating the icon
+                    enableAudio();
                 } else {
-                    // If audio has already been initiated, proceed with standard toggle
                     if (isPlaying) {
                         audio.pause();
                         isPlaying = false;
@@ -212,24 +190,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
 
-                // --- Confetti Burst on Click (from button) ---
                 const buttonRect = musicToggle.getBoundingClientRect();
                 const startX = buttonRect.left + buttonRect.width / 2;
                 const startY = buttonRect.top + buttonRect.height / 2;
 
-                const burstDotCount = gsap.utils.random(20, 40, 1); // More dots for burst
-                const burstColors = [primaryColor, secondaryColor, '#ff7597', primaryVariantColor, '#018786']; // Reuse colors
+                const burstDotCount = gsap.utils.random(20, 40, 1);
+                const burstColors = [primaryColor, secondaryColor, '#ff7597', primaryVariantColor, '#018786'];
 
                 for (let i = 0; i < burstDotCount; i++) {
                     const dot = document.createElement("div");
-                    dot.classList.add("dot", "button-burst-confetti"); // Add specific class
+                    dot.classList.add("dot", "button-burst-confetti");
                     document.querySelector('.confetti-container').appendChild(dot);
 
                     gsap.set(dot, {
                         backgroundColor: gsap.utils.random(burstColors),
-                        width: '1.5vw', // Larger size for burst
-                        height: '1.5vw', // Larger size for burst
-                        borderRadius: '50%', // Always circular for burst
+                        width: '1.5vw',
+                        height: '1.5vw',
+                        borderRadius: '50%',
                         x: startX,
                         y: startY,
                         scale: 0
@@ -237,53 +214,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     gsap.timeline({ onComplete: () => dot.remove() })
                         .to(dot, {
-                            scale: gsap.utils.random(0.5, 1.5), // Larger initial scale for burst
+                            scale: gsap.utils.random(0.5, 1.5),
                             duration: 0.2,
                             ease: "power3.out"
                         })
                         .to(dot, {
-                            duration: gsap.utils.random(0.8, 1.5), // Shorter duration for faster fall
+                            duration: gsap.utils.random(0.8, 1.5),
                             physics2D: {
-                                velocity: gsap.utils.random(300, 600), // Higher velocity for a "burst"
+                                velocity: gsap.utils.random(300, 600),
                                 angle: gsap.utils.random(0, 360),
-                                gravity: gsap.utils.random(800, 1200) // Higher gravity for faster fall
+                                gravity: gsap.utils.random(800, 1200)
                             },
-                            rotation: gsap.utils.random(0, 720), // Add rotation
+                            rotation: gsap.utils.random(0, 720),
                             autoAlpha: 0,
-                            ease: "power1.out" // Stronger ease out for burst fade
+                            ease: "power1.out"
                         }, "<");
                 }
-                // --- End Confetti Burst (from button) ---
             });
         }
     }
 
-    // --- Function for Continuous Falling Confetti with Party Popper Effect (Increased Quantity & Full Width) ---
     function startContinuousConfettiPoppers() {
         const confettiContainer = document.querySelector('.confetti-container');
         const continuousColors = [primaryColor, secondaryColor, '#ff7597', primaryVariantColor, '#018786'];
 
         function createConfettiParticle() {
             const dot = document.createElement("div");
-            dot.classList.add("dot", "continuous-popper-confetti"); // Add specific class
+            dot.classList.add("dot", "continuous-popper-confetti");
             confettiContainer.appendChild(dot);
 
-            // Source point for the "popper" effect (full width, slightly above the top edge)
             const popperStartX = gsap.utils.random(0, window.innerWidth);
-            const popperStartY = -20; // Start slightly above the top edge
+            const popperStartY = -20;
 
-            // Wavy Confetti Dimensions
-            const width = gsap.utils.random(0.6, 1.2, 0.1) + 'vw'; // Slightly larger width range
-            const height = gsap.utils.random(0.3, 0.8, 0.1) + 'vw'; // Shorter height for wavy effect
-            // Randomize a few border-radius patterns for waviness
+            const width = gsap.utils.random(0.6, 1.2, 0.1) + 'vw';
+            const height = gsap.utils.random(0.3, 0.8, 0.1) + 'vw';
             const wavyBorderRadius = gsap.utils.random([
-                '50% 10% 50% 10% / 10% 50% 10% 50%', // More abstract wavy
-                '60% 40% 60% 40% / 30% 70% 30% 70%', // Gentler wave
-                '70% 30% 70% 30% / 50% 50% 50% 50%', // More blob-like
-                '80% 20% 80% 20% / 20% 80% 20% 80%', // Elongated
-                '75% 25%', // Simple pill shape
-                '50% 0% 50% 0%', // Half-circle on one side
-                '0% 50% 0% 50%' // Half-circle on other side
+                '50% 10% 50% 10% / 10% 50% 10% 50%',
+                '60% 40% 60% 40% / 30% 70% 30% 70%',
+                '70% 30% 70% 30% / 50% 50% 50% 50%', 
+                '80% 20% 80% 20% / 20% 80% 20% 80%',
+                '75% 25%',
+                '50% 0% 50% 0%',
+                '0% 50% 0% 50%'
             ]);
 
 
@@ -296,10 +268,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 backgroundColor: gsap.utils.random(continuousColors),
                 width: width,
                 height: height,
-                borderRadius: wavyBorderRadius, // Apply the wavy border-radius
+                borderRadius: wavyBorderRadius,
                 x: popperStartX,
                 y: popperStartY,
-                rotation: gsap.utils.random(0, 360), // Initial random rotation
+                rotation: gsap.utils.random(0, 360),
                 opacity: 1
             });
 
@@ -325,10 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         setInterval(createConfettiParticle, 25);
     }
-    // --- End Function for Continuous Falling Confetti with Party Popper Effect ---
 
-    // --- Draggable Birthday Cake and Following Farsu Functionality ---
-  // --- Draggable Birthday Cake and Following Farsu Functionality ---
 function initDraggableElements() {
     const cakeImage = document.querySelector('.cake-image');
     const farsuImage = document.querySelector('.farsu-image');
@@ -339,7 +308,6 @@ function initDraggableElements() {
         return;
     }
 
-    // Set transform-origin immediately for both images
     gsap.set(cakeImage, { transformOrigin: "center center" });
     gsap.set(farsuImage, { transformOrigin: "center center" });
 
@@ -349,7 +317,6 @@ function initDraggableElements() {
     let farsuDraggableInstance;
 
     function setupInteractions() {
-        // Create the Draggable instance for the Cake
         cakeDraggableInstance = Draggable.create(cakeImage, {
             type: "x,y",
             bounds: glossyBackground,
@@ -391,7 +358,6 @@ function initDraggableElements() {
             }
         })[0];
 
-        // Create the Draggable instance for Farsu image
         farsuDraggableInstance = Draggable.create(farsuImage, {
             type: "x,y",
             bounds: glossyBackground,
@@ -420,7 +386,6 @@ function initDraggableElements() {
             }
         })[0];
 
-        // Calculate center positions after a slight delay to ensure layout is complete
         setTimeout(() => {
             const containerRect = glossyBackground.getBoundingClientRect();
             const cakeRect = cakeImage.getBoundingClientRect();
@@ -428,21 +393,18 @@ function initDraggableElements() {
             const centerX = (containerRect.width - cakeRect.width) / 2;
             const centerY = (containerRect.height - cakeRect.height) / 2;
             
-            // Set initial positions
             gsap.set(cakeImage, { x: centerX, y: centerY });
             gsap.set(farsuImage, { 
                 x: centerX + gsap.utils.random(-30, 30),
                 y: centerY + gsap.utils.random(-30, 30)
             });
 
-            // Update Draggable instances with new positions
             cakeDraggableInstance.update();
             farsuDraggableInstance.update();
 
-            // Start the initial random movement for both cake and farsu
             startRandomMovement(cakeImage, cakeDraggableInstance, 'cake');
             startFollowingCake(farsuImage, farsuDraggableInstance, cakeDraggableInstance);
-        }, 100); // 100ms delay to ensure layout is complete
+        }, 100);
     }
 
     function startRandomMovement(target, draggable, type) {
@@ -563,12 +525,9 @@ function initDraggableElements() {
         }
     }
 
-    // Initialize with a slight delay to ensure everything is ready
     setTimeout(setupInteractions, 100);
 }
-    // --- End Draggable Birthday Cake and Following Farsu Functionality ---
 
-    // Slideshow Initialization Function
     function initSlideshow() {
         const sections = gsap.utils.toArray(".slide");
         const images = gsap.utils.toArray(".image").reverse();
@@ -582,7 +541,6 @@ function initDraggableElements() {
         let slideInterval;
         let animating = false;
 
-        // Check if elements exist before setting GSAP properties
         if (outerWrappers.length) gsap.set(outerWrappers, { xPercent: 100 });
         if (innerWrappers.length) gsap.set(innerWrappers, { xPercent: -100 });
 
@@ -614,7 +572,7 @@ function initDraggableElements() {
             let nextHeading = nextSection ? nextSection.querySelector(".slide__heading") : null;
 
             gsap.set([sections, images], { zIndex: 0, autoAlpha: 0 });
-            // Ensure elements exist before setting
+
             if (sections[currentIndex] && images[index]) {
                 gsap.set([sections[currentIndex], images[index]], { zIndex: 1, autoAlpha: 1 });
             }
@@ -643,7 +601,7 @@ function initDraggableElements() {
                     0
                 );
 
-            if (heading) { // Only animate if heading exists
+            if (heading) {
                 tl.to(
                     heading,
                     { "--width": 800, xPercent: 30 * direction },
@@ -651,7 +609,7 @@ function initDraggableElements() {
                 );
             }
 
-            if (nextHeading) { // Only animate if nextHeading exists
+            if (nextHeading) {
                 tl.fromTo(
                     nextHeading,
                     { "--width": 800, xPercent: -30 * direction },
@@ -695,7 +653,7 @@ function initDraggableElements() {
 
         startSlideInterval();
 
-        if (interactiveSection) { // Ensure interactiveSection exists before creating observer
+        if (interactiveSection) {
             Observer.create({
                 target: interactiveSection,
                 type: "wheel,touch,pointer",
@@ -725,7 +683,6 @@ function initDraggableElements() {
         });
     }
 
-    // --- Function to initialize the Mouse Wave Gallery effect ---
     function initMouseWaveGallery() {
         let oldX = 0,
             oldY = 0,
@@ -734,41 +691,37 @@ function initDraggableElements() {
 
         const root = document.querySelector('.mwg_effect000')
 
-        // Ensure root exists before adding event listener
         if (root) {
             root.addEventListener("mousemove", (e) => {
-                // Calculate horizontal movement since the last mouse position
                 deltaX = e.clientX - oldX;
 
-                // Calculate vertical movement since the last mouse position
                 deltaY = e.clientY - oldY;
 
-                // Update old coordinates with the current mouse position
                 oldX = e.clientX;
                 oldY = e.clientY;
             })
 
             root.querySelectorAll('.media').forEach(el => {
-                // Add an event listener for when the mouse enters each media
+
                 el.addEventListener('mouseenter', () => {
                     const tl = gsap.timeline({
                         onComplete: () => {
                             tl.kill()
                         }
                     })
-                    tl.timeScale(1.2) // Animation will play 20% faster than normal
+                    tl.timeScale(1.2)
 
                     const image = el.querySelector('img')
-                    if (image) { // Ensure image exists
+                    if (image) { 
                         tl.to(image, {
                             inertia: {
                                 x: {
-                                    velocity: deltaX * 30, // Higher number = movement amplified
-                                    end: 0 // Go back to the initial position
+                                    velocity: deltaX * 30,
+                                    end: 0 
                                 },
                                 y: {
-                                    velocity: deltaY * 30, // Higher number = movement amplified
-                                    end: 0 // Go back to the initial position
+                                    velocity: deltaY * 30,
+                                    end: 0 
                                 },
                             },
                         })
@@ -776,11 +729,11 @@ function initDraggableElements() {
                             rotate: 0
                         }, {
                             duration: 0.4,
-                            rotate: (Math.random() - 0.5) * 30, // Returns a value between -15 & 15
+                            rotate: (Math.random() - 0.5) * 30,
                             yoyo: true,
                             repeat: 1,
-                            ease: 'power1.inOut' // Will slow at the begin and the end
-                        }, '<') // The animation starts at the same time as the previous tween
+                            ease: 'power1.inOut'
+                        }, '<')
                     }
                 })
             })
@@ -789,7 +742,6 @@ function initDraggableElements() {
         }
     }
 
-// --- Balloons Floating Effect ---
 function initBalloons() {
     const container = document.querySelector('.balloons-container');
     if (!container) return;
@@ -814,7 +766,6 @@ function initBalloons() {
         balloon.appendChild(string);
         container.appendChild(balloon);
         
-        // Random properties
         const color = colors[Math.floor(Math.random() * colors.length)];
         const size = gsap.utils.random(60, 100);
         const startX = gsap.utils.random(0, window.innerWidth);
@@ -822,30 +773,25 @@ function initBalloons() {
         const floatDuration = gsap.utils.random(15, 25);
         const swayAmount = gsap.utils.random(50, 150);
         
-        // Style the balloon
         balloon.style.backgroundColor = color;
         balloon.style.width = `${size}px`;
         balloon.style.height = `${size * 1.25}px`;
         
-        // Initial position
         gsap.set(balloon, {
             x: startX,
             y: startY
         });
         
-        // Floating animation
         const floatTween = gsap.to(balloon, {
             y: -size * 2,
             duration: floatDuration,
             ease: "none",
             onComplete: () => {
-                // Remove balloon when it reaches top
                 balloon.remove();
                 balloons = balloons.filter(b => b.element !== balloon);
             }
         });
         
-        // Swaying animation
         const swayTween = gsap.to(balloon, {
             x: `+=${swayAmount}`,
             duration: gsap.utils.random(3, 6),
@@ -854,7 +800,6 @@ function initBalloons() {
             ease: "sine.inOut"
         });
         
-        // Click interaction
         balloon.addEventListener('click', (e) => {
             e.stopPropagation();
             popBalloon(balloon, e.clientX, e.clientY);
@@ -868,7 +813,6 @@ function initBalloons() {
     }
 
     function popBalloon(balloon, x, y) {
-        // Create confetti burst
         const burstCount = 20;
         const burstParticles = [];
         const color = balloon.style.backgroundColor;
@@ -896,7 +840,6 @@ function initBalloons() {
             });
         }
         
-        // Remove balloon
         const balloonObj = balloons.find(b => b.element === balloon);
         if (balloonObj) {
             balloonObj.floatTween.kill();
@@ -906,19 +849,16 @@ function initBalloons() {
         balloon.remove();
     }
 
-    // Initial balloons
     for (let i = 0; i < balloonCount; i++) {
         createBalloon();
     }
 
-    // Continuous balloon creation
     balloonInterval = setInterval(() => {
-        if (balloons.length < balloonCount * 1.5) { // Keep some buffer
+        if (balloons.length < balloonCount * 1.5) {
             createBalloon();
         }
     }, 2000);
 
-    // Cleanup on window resize
     window.addEventListener('resize', () => {
         balloons.forEach(balloon => {
             balloon.floatTween.kill();
@@ -928,7 +868,6 @@ function initBalloons() {
         balloons = [];
         clearInterval(balloonInterval);
         
-        // Reinitialize
         for (let i = 0; i < balloonCount; i++) {
             createBalloon();
         }
@@ -939,12 +878,12 @@ function initBalloons() {
         }, 2000);
     });
 }
-    // Initialize all functionalities when the DOM is ready
+
     setupAudioInteraction();
     initSlideshow();
     startContinuousConfettiPoppers();
-    initDraggableElements(); // Initialize both draggable elements (cake and farsu)
-    initMouseWaveGallery(); // Initialize the new mouse wave gallery section
+    initDraggableElements();
+    initMouseWaveGallery();
     initBalloons();
 
 });
